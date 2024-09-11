@@ -12,8 +12,12 @@ import java.util.Optional;
 @Service
 public class EnderecoService {
 
-    @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    public EnderecoService(EnderecoRepository enderecoRepository) {
+        this.enderecoRepository = enderecoRepository;
+    }
 
     public void adicionarEndereco(Endereco endereco) {
         enderecoRepository.save(endereco);
