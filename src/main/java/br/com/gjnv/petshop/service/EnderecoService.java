@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 public class EnderecoService {
 
-    private EnderecoRepository enderecoRepository;
+    private final EnderecoRepository enderecoRepository;
 
     @Autowired
     public EnderecoService(EnderecoRepository enderecoRepository) {
@@ -26,6 +26,7 @@ public class EnderecoService {
     public void removerEndereco(Long id) {
         enderecoRepository.deleteById(id);
     }
+
     public Endereco atualizarEndereco(Long id, EnderecoDto enderecoDto) {
         Optional<Endereco> enderecoOptional = enderecoRepository.findById(id);
 
