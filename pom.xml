@@ -74,11 +74,14 @@
 			<version>42.7.4</version>
 			<scope>runtime</scope>
 		</dependency>
+<<<<<<< HEAD
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+=======
+>>>>>>> fb6344f81df0d8abf6f8bcf7a715ac897757c733
 	</dependencies>
 
 	<build>
