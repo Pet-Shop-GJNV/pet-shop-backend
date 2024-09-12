@@ -5,6 +5,8 @@ import br.com.gjnv.petshop.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/enderecos")
 public class EnderecoController {
@@ -22,12 +24,12 @@ public class EnderecoController {
     }
 
     @DeleteMapping("/{id}")
-    public void removerEndereco(@PathVariable long id) {
+    public void removerEndereco(@PathVariable int id) {
         enderecoService.removerEndereco(id);
     }
 
     @PutMapping("/{id}")
-    public void atualizarEndereco(@PathVariable long id, @RequestBody EnderecoDto endereco) {
+    public void atualizarEndereco(@PathVariable int id, @RequestBody EnderecoDto endereco) {
         enderecoService.atualizarEndereco(id, endereco);
     }
 }

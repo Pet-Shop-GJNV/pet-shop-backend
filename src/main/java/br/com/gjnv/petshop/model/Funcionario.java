@@ -1,57 +1,49 @@
 package br.com.gjnv.petshop.model;
-
-import br.com.gjnv.petshop.model.Endereco;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import org.hibernate.annotations.GenericGenerator;
-
+import lombok.Getter;
+import lombok.Setter;
 import java.util.Date;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@MappedSuperclass
+@Getter
+@Setter
+@Entity
 public abstract class Funcionario {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NonNull
-    @Column(nullable = false)
     private String nome;
-
-    @NonNull
-    @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Embedded
-    private Endereco endereco;
+//    @Embedded
+//    private Endereco endereco;
 
-    @NonNull
-    @Column(nullable = false)
     private String telefone;
 
-    @NonNull
     @Temporal(TemporalType.DATE)
-    @Column(name = "data_contratacao", nullable = false)
     private Date dataContratacao;
 
-    @NonNull
-    @Column(name = "horario_trabalho", nullable = false)
     private String horarioTrabalho;
 
-    @NonNull
-    @Column(nullable = false)
     private String cargo;
 
-    @NonNull
-    @Column(nullable = false)
     private double salario;
+
+    public abstract double calcularSalario();
+
+    public void registrarPonto() {
+        System.out.println("Ponto registrado para o funcionário: " + nome);
+    }
+
+    public void visualizarDadosPessoais() {
+        System.out.println("Dados pessoais: " + nome + ", " + cpf);
+    }
+
+    public void atualizarDadosPessoais(String nome, Endereco endereco, String telefone) {
+        this.nome = nome;
+//        this.endereco = endereco;
+        this.telefone = telefone;
+    }
 }
