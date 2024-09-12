@@ -1,35 +1,64 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.model.Pet;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RequestMapping("/pet")
 @RestController
 public class PetController {
 
-    @GetMapping("/")
-    public ResponseEntity<String> getAllPets(){
-        return ResponseEntity.ok("devo retornar todos os pets");
+
+    Pet pet1 = new Pet(1L, "dog", 10, "caramelo", "cliente");
+    Pet pet2 = new Pet(2L, "cachorro", 6, "vira-lata", "cliente");
+    List<Pet> pets = new ArrayList<>(Arrays.asList(pet1, pet2));
+
+
+    @GetMapping()
+    public ResponseEntity <List<Pet>> getAllPets(){
+        return ResponseEntity.ok(pets);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getPetById(@PathVariable Long id){
-        return ResponseEntity.ok("devo retornar o pet "+id+" se encontrado ou informar que não achei");
+    public ResponseEntity<Pet> getPetById(@PathVariable Long id){
+        try{
+            Pet pet = pets.get(Integer.parseInt(String.valueOf(id)) - 1);
+            return ResponseEntity.ok(pet);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
+
     @PostMapping
-    public ResponseEntity<String> createPet(@RequestBody String oPetPraSalvar){
-        return ResponseEntity.status(HttpStatus.CREATED).body("devo salvar o pet "+oPetPraSalvar+" ou informar que não salvei");
+    public ResponseEntity<Pet> createPet(@RequestBody Pet petPraSalvar){
+        pets.add(petPraSalvar);
+        return ResponseEntity.status(HttpStatus.CREATED).body(petPraSalvar);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updatePetById(@PathVariable Long id){
-        return ResponseEntity.ok("devo atualizar o pet "+id+" se encontrado ou informar que não achei");
+    public ResponseEntity<Pet> updatePetById(@PathVariable Long id, @RequestBody Pet petParaEditar){
+        try{
+            pets.set(id.intValue()-1, petParaEditar);
+            return ResponseEntity.ok(petParaEditar);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePetById(@PathVariable Long id){
-        return ResponseEntity.ok("devo matar o pet "+id+" se encontrado ou informar que não achei");
+    public ResponseEntity<Pet> deletePetById(@PathVariable Long id){
+        try{
+            Pet pet = pets.get(id.intValue()-1);
+            pets.remove(pet);
+            return ResponseEntity.ok().body(null);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
  }
