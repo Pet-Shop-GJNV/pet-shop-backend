@@ -1,14 +1,8 @@
 package br.com.gjnv.petshop.dto;
 
-<<<<<<< HEAD
-import java.util.UUID;
-
-@Data
-=======
->>>>>>> fb6344f81df0d8abf6f8bcf7a715ac897757c733
 public class EnderecoDto {
 
-    private int id;
+    private Long id;
     private String rua;
     private int numero;
     private String bairro;

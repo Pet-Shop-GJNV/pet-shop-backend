@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class EnderecoService {
@@ -24,15 +23,11 @@ public class EnderecoService {
         enderecoRepository.save(endereco);
     }
 
-    public void removerEndereco(Integer id) {
+    public void removerEndereco(Long id) {
         enderecoRepository.deleteById(id);
     }
-<<<<<<< HEAD
-    public Endereco atualizarEndereco(Integer id, EnderecoDto enderecoDto) {
-=======
 
     public Endereco atualizarEndereco(Long id, EnderecoDto enderecoDto) {
->>>>>>> fb6344f81df0d8abf6f8bcf7a715ac897757c733
         Optional<Endereco> enderecoOptional = enderecoRepository.findById(id);
 
         if (enderecoOptional.isPresent()) {

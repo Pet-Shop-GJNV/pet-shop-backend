@@ -1,26 +1,15 @@
 package br.com.gjnv.petshop.model;
 
-<<<<<<< HEAD
-import java.util.UUID;
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-=======
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
->>>>>>> fb6344f81df0d8abf6f8bcf7a715ac897757c733
 @Entity
 public class Endereco {
-
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String rua;
     private int numero;
     private String bairro;
