@@ -13,8 +13,12 @@ import java.util.UUID;
 @Service
 public class EnderecoService {
 
+    private final EnderecoRepository enderecoRepository;
+
     @Autowired
-    private EnderecoRepository enderecoRepository;
+    public EnderecoService(EnderecoRepository enderecoRepository) {
+        this.enderecoRepository = enderecoRepository;
+    }
 
     public void adicionarEndereco(Endereco endereco) {
         enderecoRepository.save(endereco);
@@ -23,7 +27,12 @@ public class EnderecoService {
     public void removerEndereco(Integer id) {
         enderecoRepository.deleteById(id);
     }
+<<<<<<< HEAD
     public Endereco atualizarEndereco(Integer id, EnderecoDto enderecoDto) {
+=======
+
+    public Endereco atualizarEndereco(Long id, EnderecoDto enderecoDto) {
+>>>>>>> fb6344f81df0d8abf6f8bcf7a715ac897757c733
         Optional<Endereco> enderecoOptional = enderecoRepository.findById(id);
 
         if (enderecoOptional.isPresent()) {
