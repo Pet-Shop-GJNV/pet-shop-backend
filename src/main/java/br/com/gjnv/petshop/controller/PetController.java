@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/pet")
 @RestController
@@ -26,9 +27,9 @@ public class PetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pet> getPetById(@PathVariable Long id){
-            Pet pet = petService.findById(id);
-            if(pet != null){
-                return ResponseEntity.ok(pet);
+            Optional<Pet> pet = petService.findById(id);
+            if(pet.isPresent()){
+                return ResponseEntity.ok(pet.get());
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
