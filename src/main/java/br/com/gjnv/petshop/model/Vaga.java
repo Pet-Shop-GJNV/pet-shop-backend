@@ -4,14 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
-@NoArgsConstructor
 @Entity
 public class Vaga {
 
@@ -24,6 +21,39 @@ public class Vaga {
     private boolean horarioDisponivel;
 
     private LocalTime horario;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDate getData() {
+        return data;
+    }
+
+    public void setData(LocalDate data) {
+        this.data = data;
+    }
+
+    public boolean isHorarioDisponivel() {
+        return horarioDisponivel;
+    }
+
+    public void setHorarioDisponivel(boolean horarioDisponivel) {
+        this.horarioDisponivel = horarioDisponivel;
+    }
+
+    public LocalTime getHorario() {
+        return horario;
+    }
+
+    public void setHorario(LocalTime horario) {
+        this.horario = horario;
+    }
 
     public boolean verificarDisponibilidade(LocalTime horario, LocalDate data) {
         return this.horario.equals(horario) && this.data.equals(data) && this.horarioDisponivel;
