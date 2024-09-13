@@ -16,7 +16,7 @@ services:
       POSTGRES_PASSWORD: ${DB_USER}
       POSTGRES_DB: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     restart: on-failure
     networks:
       - app-private-network
