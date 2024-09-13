@@ -23,11 +23,11 @@ public class EnderecoService {
         enderecoRepository.save(endereco);
     }
 
-    public void removerEndereco(Integer id) {
+    public void removerEndereco(Long id) {
         enderecoRepository.deleteById(id);
     }
 
-    public Endereco atualizarEndereco(Integer id, EnderecoDto enderecoDto) {
+    public Endereco atualizarEndereco(Long id, EnderecoDto enderecoDto) {
         Optional<Endereco> enderecoOptional = enderecoRepository.findById(id);
 
         if (enderecoOptional.isPresent()) {
