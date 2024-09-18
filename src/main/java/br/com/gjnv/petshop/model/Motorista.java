@@ -1,6 +1,8 @@
 package br.com.gjnv.petshop.model;
 
 import jakarta.persistence.*;
+
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -21,13 +23,18 @@ public class Motorista extends Funcionario {
     @JoinColumn(name = "rota_atual_id")
     private Endereco rotaAtual;
 
-    public Motorista() {}
 
-    public Motorista(String cnh, String veiculo, Endereco rotaAtual) {
+    public Motorista(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Endereco rotaAtual, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
+        super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);
         this.cnh = cnh;
         this.veiculo = veiculo;
         this.rotaAtual = rotaAtual;
     }
+
+    public Motorista() {
+        super();
+    }
+
 
     public String getCnh() {
         return cnh;
@@ -62,6 +69,8 @@ public class Motorista extends Funcionario {
         this.rotaAtual = endereco;
         System.out.println("Entrega realizada no endereço: " + endereco);
     }
+
+
 
     @Override
     //TODO: Verificar se é com Object mesmo

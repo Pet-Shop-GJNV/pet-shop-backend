@@ -6,6 +6,8 @@ import br.com.gjnv.petshop.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/enderecos")
 public class EnderecoController {
@@ -15,6 +17,16 @@ public class EnderecoController {
     @Autowired
     public EnderecoController(EnderecoService enderecoService) {
         this.enderecoService = enderecoService;
+    }
+
+    @GetMapping
+    public List<Endereco> listarEnderecos() {
+        return enderecoService.listarEnderecos();
+    }
+
+    @GetMapping("/{id}")
+    public Endereco buscarEnderecoPorId(@PathVariable long id) {
+        return enderecoService.buscarEnderecoPorId(id);
     }
 
     @PostMapping

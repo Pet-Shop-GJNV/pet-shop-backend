@@ -39,6 +39,20 @@ public abstract class Funcionario {
     @Column(nullable = false)
     private double salario;
 
+    protected Funcionario(String nome, String cpf, Endereco endereco, String telefone, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.endereco = endereco;
+        this.telefone = telefone;
+        this.dataContratacao = dataContratacao;
+        this.horarioTrabalho = horarioTrabalho;
+        this.cargo = cargo;
+        this.salario = salario;
+    }
+
+    protected Funcionario() {
+    }
+
     public String getTelefone() {
         return telefone;
     }
