@@ -1,26 +1,28 @@
 package br.com.gjnv.petshop.dto;
 
+import java.util.UUID;
+
 public class MotoristaDto {
 
-    private Long id;
+    private UUID id;
     private String cnh;
     private String veiculo;
-    private Long rotaAtualId;
+    private UUID rotaAtualId;
 
     public MotoristaDto() {}
 
-    public MotoristaDto(Long id, String cnh, String veiculo, Long rotaAtualId) {
+    public MotoristaDto(UUID id, String cnh, String veiculo, UUID rotaAtualId) {
         this.id = id;
         this.cnh = cnh;
         this.veiculo = veiculo;
         this.rotaAtualId = rotaAtualId;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -40,11 +42,11 @@ public class MotoristaDto {
         this.veiculo = veiculo;
     }
 
-    public Long getRotaAtualId() {
+    public UUID getRotaAtualId() {
         return rotaAtualId;
     }
 
-    public void setRotaAtualId(Long rotaAtualId) {
+    public void setRotaAtualId(UUID rotaAtualId) {
         this.rotaAtualId = rotaAtualId;
     }
 }

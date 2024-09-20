@@ -7,6 +7,7 @@ import br.com.gjnv.petshop.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,11 @@ public class EnderecoService {
     }
 
     public void removerEndereco(Long id) {
+        Optional<Endereco> e = enderecoRepository.findById(id);
+        System.out.println(e.isPresent());
+        if (!e.isPresent()) {
+            throw new ResourceNotFoundException("Endereço com ID " + id + " não encontrado.");
+        }
         enderecoRepository.deleteById(id);
     }
 
@@ -42,5 +48,13 @@ public class EnderecoService {
         } else {
             throw new ResourceNotFoundException("Endereço com ID " + id + " não encontrado.");
         }
+    }
+
+    public List<Endereco> listarEnderecos() {
+        return enderecoRepository.findAll();
+    }
+
+    public Endereco buscarEnderecoPorId(long id) {
+        return enderecoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Endereço com ID " + id + " não encontrado."));
     }
 }
