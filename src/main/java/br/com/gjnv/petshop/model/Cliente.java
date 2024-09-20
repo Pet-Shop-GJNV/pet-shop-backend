@@ -46,7 +46,7 @@ public class Cliente {
         this.cpf = cpf;
     }
 
-    public String consultarServico(Long servicoId) {
+    public String consultarServico(int servicoId) {
         return "Serviço consultado: " + servicoId;
     }
 
@@ -54,7 +54,7 @@ public class Cliente {
         return "Serviço solicitado: " + tipoServico;
     }
 
-    public String cancelarServico(Long servicoId) {
+    public String cancelarServico(int servicoId) {
         return "Serviço cancelado: " + servicoId;
     }
 }

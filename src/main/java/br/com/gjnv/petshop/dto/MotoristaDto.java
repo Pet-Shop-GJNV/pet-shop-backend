@@ -7,8 +7,6 @@ public class MotoristaDto {
     private String veiculo;
     private Long rotaAtualId;
 
-    public MotoristaDto() {}
-
     public MotoristaDto(Long id, String cnh, String veiculo, Long rotaAtualId) {
         this.id = id;
         this.cnh = cnh;
