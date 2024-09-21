@@ -1,7 +1,9 @@
 package br.com.gjnv.petshop.service;
 
+import br.com.gjnv.petshop.model.Endereco;
 import br.com.gjnv.petshop.model.Gerente;
 import br.com.gjnv.petshop.model.Motorista;
+import br.com.gjnv.petshop.repository.EnderecoRepository;
 import br.com.gjnv.petshop.repository.GerenteRepository;
 import br.com.gjnv.petshop.repository.MotoristaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class GerenteService {
     @Autowired
     private MotoristaRepository funcionarioRepository;
 
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+
     public List<Gerente> findAll() {
         return gerenteRepository.findAll();
     }
@@ -29,6 +34,21 @@ public class GerenteService {
     }
 
     public Gerente save(Gerente gerente) {
+        Endereco endereco = gerente.getEndereco();
+        if (endereco != null) {
+            if (endereco.getId() == null) {
+                endereco = enderecoRepository.save(endereco);
+            } else {
+                Optional<Endereco> existingEndereco = enderecoRepository.findById(endereco.getId());
+                if (existingEndereco.isEmpty()) {
+                    endereco = enderecoRepository.save(endereco);
+                } else {
+                    endereco = existingEndereco.get();
+                }
+            }
+            gerente.setEndereco(endereco);
+        }
+
         List<Motorista> equipe = gerente.getEquipe();
         for (Motorista funcionario : equipe) {
             if (funcionario.getId() == null) {
@@ -49,6 +69,17 @@ public class GerenteService {
         return gerenteRepository.findById(id).map(gerente -> {
             gerente.setSetorResponsavel(gerenteDetails.getSetorResponsavel());
             gerente.setMetaMensal(gerenteDetails.getMetaMensal());
+
+            Endereco endereco = gerente.getEndereco();
+            Endereco enderecoDetails = gerenteDetails.getEndereco();
+            if (endereco != null && enderecoDetails != null) {
+                endereco.setRua(enderecoDetails.getRua());
+                endereco.setNumero(enderecoDetails.getNumero());
+                endereco.setCidade(enderecoDetails.getCidade());
+                endereco.setBairro(enderecoDetails.getBairro());
+                endereco.setComplemento(enderecoDetails.getComplemento());
+                enderecoRepository.save(endereco);
+            }
 
             List<Motorista> equipe = gerente.getEquipe();
             List<Motorista> equipeDetails = gerenteDetails.getEquipe();
@@ -74,11 +105,15 @@ public class GerenteService {
 
     public boolean delete(UUID id) {
         return gerenteRepository.findById(id).map(gerente -> {
+            Endereco endereco = gerente.getEndereco();
             List<Motorista> equipe = gerente.getEquipe();
             for (Motorista funcionario : equipe) {
                 funcionarioRepository.delete(funcionario);
             }
             gerenteRepository.delete(gerente);
+            if (endereco != null) {
+                enderecoRepository.delete(endereco);
+            }
             return true;
         }).orElse(false);
     }

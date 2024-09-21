@@ -24,12 +24,17 @@ public class Gerente extends Funcionario implements IClienteManager {
     @Column(nullable = false)
     private double metaMensal;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
+
     public Gerente() {}
 
-    public Gerente(String setorResponsavel, List<Motorista> equipe, double metaMensal) {
+    public Gerente(String setorResponsavel, List<Motorista> equipe, double metaMensal, Endereco endereco) {
         this.setorResponsavel = setorResponsavel;
         this.equipe = equipe;
         this.metaMensal = metaMensal;
+        this.endereco = endereco;
     }
 
     public UUID getId() {
@@ -64,6 +69,14 @@ public class Gerente extends Funcionario implements IClienteManager {
         this.metaMensal = metaMensal;
     }
 
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,6 +97,7 @@ public class Gerente extends Funcionario implements IClienteManager {
                 ", setorResponsavel='" + setorResponsavel + '\'' +
                 ", equipe=" + equipe +
                 ", metaMensal=" + metaMensal +
+                ", endereco=" + endereco +
                 '}';
     }
 

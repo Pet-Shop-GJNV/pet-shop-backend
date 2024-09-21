@@ -73,7 +73,7 @@ public class MotoristaService {
             endereco.setBairro(enderecoDetails.getBairro());
             endereco.setComplemento(enderecoDetails.getComplemento());
             enderecoRepository.save(endereco);
-
+//TODO: Não ta funfando legal não
             motorista.setTelefone(motoristaDetails.getTelefone());
             motorista.setDataContratacao(motoristaDetails.getDataContratacao());
             motorista.setHorarioTrabalho(motoristaDetails.getHorarioTrabalho());
