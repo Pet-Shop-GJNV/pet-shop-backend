@@ -40,7 +40,8 @@ public class EnderecoService {
 
             return enderecoRepository.save(endereco);
         } else {
-            throw new ResourceNotFoundException("Endereço com ID " + id + " não encontrado.");
+            throw new ResourceNotFoundException("Teste");
+//            throw new ResourceNotFoundException("Endereço com ID " + id + " não encontrado.");
         }
     }
 }
