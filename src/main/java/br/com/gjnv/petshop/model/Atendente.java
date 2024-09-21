@@ -23,9 +23,11 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    public Atendente() {}
+    public Atendente() {
+        this.servicoRealizado = false;
+    }
 
-    public Atendente(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario ){
+    public Atendente(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
         super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);
         this.servicoRealizado = false;
     }
@@ -78,62 +80,77 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
 
     @Override
     public void cadastrarCliente(Cliente cliente) {
-        // Implementação do método
+        // Lógica para cadastrar um cliente
+        System.out.println("Cliente cadastrado: " + cliente.getNome());
     }
 
     @Override
     public Cliente consultarCliente(Long id) {
-        // Implementação do método
-        return null;
+        // Lógica para consultar um cliente
+        System.out.println("Cliente consultado com ID: " + id);
+        return new Cliente(); // Retorna um cliente fictício
     }
 
     @Override
     public void excluirCliente(Long id) {
-        // Implementação do método
+        // Lógica para excluir um cliente
+        System.out.println("Cliente excluído com ID: " + id);
     }
 
     @Override
     public void atualizarCliente(Cliente cliente) {
-        // Implementação do método
+        // Lógica para atualizar um cliente
+        System.out.println("Cliente atualizado: " + cliente.getNome());
     }
-//TODO:  trocar Object por Pet
+// OBS: Trocar Object por Pet
     @Override
     public void cadastrarPet(Object pet) {
-        // Implementação do método
+        // Lógica para cadastrar um pet
+        //System.out.println("Pet cadastrado: " + pet.getNome());
     }
 
     @Override
     public Object consultarPet(Long id) {
-        // Implementação do método
-        return null;
-    }
-    @Override
-    public void atualizarPet(Object pet) {
-        // Implementação do método
+        // Lógica para consultar um pet
+        System.out.println("Pet consultado com ID: " + id);
+       return new Object(); // Retorna um pet fictício
     }
 
     @Override
     public void excluirPet(Long id) {
-        // Implementação do método
+        // Lógica para excluir um pet
+//        System.out.println("Pet excluído com ID: " + id);
+    }
+
+    @Override
+    public void atualizarPet(Object pet) {
+        // Lógica para atualizar um pet
+         //System.out.println("Pet atualizado: " + pet.getNome());
     }
 
     public void realizarAtendimento() {
-        // Implementação do método
+        // Lógica para realizar atendimento
+        System.out.println("Atendimento realizado.");
     }
 
     public void consultarAgenda() {
-        // Implementação do método
+        // Lógica para consultar agenda
+        System.out.println("Agenda consultada.");
     }
 
     public void registrarServico() {
-        // Implementação do método
+        // Lógica para registrar serviço
+        System.out.println("Serviço registrado.");
     }
 
     public void atualizarPagamento() {
-        // Implementação do método
+        // Lógica para atualizar pagamento
+        System.out.println("Pagamento atualizado.");
     }
 
     public void atualizarStatusServico() {
-        // Implementação do método
+        // Lógica para atualizar status do serviço
+        this.servicoRealizado = true;
+        System.out.println("Status do serviço atualizado.");
     }
 }

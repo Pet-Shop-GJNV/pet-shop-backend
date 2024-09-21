@@ -1,8 +1,10 @@
 package br.com.gjnv.petshop.service;
 
 import br.com.gjnv.petshop.model.Atendente;
+import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Endereco;
 import br.com.gjnv.petshop.repository.AtendenteRepository;
+import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class AtendenteService {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     public List<Atendente> findAll() {
         return atendenteRepository.findAll();
@@ -55,7 +60,6 @@ public class AtendenteService {
             atendente.setHorarioTrabalho(atendenteDetails.getHorarioTrabalho());
             atendente.setCargo(atendenteDetails.getCargo());
             atendente.setSalario(atendenteDetails.getSalario());
-            atendente.setServicoRealizado(atendenteDetails.isServicoRealizado());
 
             // Atualiza o endereço existente
             Endereco endereco = atendente.getEndereco();
@@ -82,5 +86,37 @@ public class AtendenteService {
             }
             return true;
         }).orElse(false);
+    }
+
+    public void atualizarStatusServico(UUID id) {
+        atendenteRepository.findById(id).ifPresent(atendente -> {
+            atendente.setServicoRealizado(true);
+            atendenteRepository.save(atendente);
+        });
+    }
+
+    public void cadastrarCliente(Cliente cliente) {
+        clienteRepository.save(cliente);
+    }
+
+    public Cliente consultarCliente(Long id) {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
+    }
+
+    public void excluirCliente(Long id) {
+        if (clienteRepository.existsById(id)) {
+            clienteRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Cliente não encontrado.");
+        }
+    }
+
+    public void atualizarCliente(Cliente cliente) {
+        if (clienteRepository.existsById(cliente.getId())) {
+            clienteRepository.save(cliente);
+        } else {
+            throw new IllegalArgumentException("Cliente não encontrado.");
+        }
     }
 }
