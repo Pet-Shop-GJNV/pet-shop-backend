@@ -1,12 +1,9 @@
 package br.com.gjnv.petshop.manager;
 
-import br.com.gjnv.petshop.dto.ServicoDto;
-import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.model.Motorista;
-import br.com.gjnv.petshop.model.Servico;
-
 import java.util.List;
 import java.util.Optional;
+
+import br.com.gjnv.petshop.model.Servico;
 
 public interface IServico {
 

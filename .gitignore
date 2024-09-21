@@ -61,7 +61,15 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
-
+.env
+.env.example
+.github/workflows/docker-image.yml
+README.md
+docker-compose.yaml
+pom.xml
+src/main/java/br/com/gjnv/petshop/controller/HealthCheckController.java
+src/main/resources/application.properties
+src/test/java/br/com/gjnv/petshop/PetshopApplicationTest.java
 # Uncomment this line if you wish to ignore the project description file.
 # Typically, this file would be tracked if it contains build/dependency configurations:
 #.project
@@ -655,5 +663,7 @@ gradle-app.setting
 *.hprof
 
 .vscode/**
+
+target/**
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,visualstudiocode,intellij,intellij+all,intellij+iml,eclipse,netbeans,maven,gradle,java,dotenv,jetbrains,jetbrains+iml,jetbrains+all

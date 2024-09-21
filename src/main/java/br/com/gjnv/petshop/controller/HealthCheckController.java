@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/")
 @Tag(name = "Health Check", description = "Verifica se a API está funcionando corretamente")
+
 public class HealthCheckController {
     @Operation(summary = "Verifica se a API está funcionando corretamente")
     @GetMapping("/")

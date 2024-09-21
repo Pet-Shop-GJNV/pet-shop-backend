@@ -1,4 +1,5 @@
 package br.com.gjnv.petshop.model;
+import jakarta.persistence.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

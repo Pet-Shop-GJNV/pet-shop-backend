@@ -1,40 +1,40 @@
 package br.com.gjnv.petshop.model;
 
-import jakarta.persistence.*;
-
 import java.util.Date;
 import java.util.Objects;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "motoristas")
 public class Motorista extends Funcionario {
 
-//    @NonNull
-//TODO: verificar se é necessário, se for qual import dar
     @Column(nullable = false, unique = true)
     private String cnh;
 
-//    @NonNull
-//TODO: verificar se é necessário, se for qual import dar
     @Column(nullable = false)
     private String veiculo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rota_atual_id")
     private Endereco rotaAtual;
 
-
-    public Motorista(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Endereco rotaAtual, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
+    public Motorista(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
         super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);
         this.cnh = cnh;
         this.veiculo = veiculo;
-        this.rotaAtual = rotaAtual;
+        this.rotaAtual = null;
     }
 
     public Motorista() {
         super();
+        this.rotaAtual = null;
     }
-
 
     public String getCnh() {
         return cnh;
@@ -62,18 +62,13 @@ public class Motorista extends Funcionario {
 
     public void realizarColeta(Endereco endereco) {
         this.rotaAtual = endereco;
-        System.out.println("Coleta realizada no endereço: " + endereco);
     }
 
     public void realizarEntrega(Endereco endereco) {
         this.rotaAtual = endereco;
-        System.out.println("Entrega realizada no endereço: " + endereco);
     }
 
-
-
     @Override
-    //TODO: Verificar se é com Object mesmo
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

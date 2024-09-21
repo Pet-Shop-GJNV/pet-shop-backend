@@ -1,12 +1,11 @@
 package br.com.gjnv.petshop.repository;
 
-import java.util.UUID;
-
+import br.com.gjnv.petshop.model.Gerente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.gjnv.petshop.model.Motorista;
+import java.util.UUID;
 
 @Repository
-public interface MotoristaRepository extends JpaRepository<Motorista, UUID> {
+public interface GerenteRepository extends JpaRepository<Gerente, UUID> {
 }
