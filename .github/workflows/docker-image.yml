@@ -3,10 +3,10 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main
+      - dev
   pull_request:
     branches:
-      - main
+      - dev
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/petshop-gjnv-backend:stable .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/petshop-gjnv-backend:latest .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -40,4 +40,4 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/petshop-gjnv-backend:stable
+          docker push ${{ secrets.DOCKER_USERNAME }}/petshop-gjnv-backend:latest
