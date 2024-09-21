@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,29 +17,44 @@ public class AgendamentoService {
     @Autowired
     private AgendamentoRepository agendamentoRepository;
 
+    @Autowired
+    private ServicoService servicoService;
+
     @Transactional
-    public Agendamento createAgendamento(AgendamentoDto agendamentoDTO) {
+    public Agendamento createAgendamento(AgendamentoDto agendamentoDto) {
+        Optional<Servico> servicoOpt = servicoService.consultarServico(agendamentoDto.getServicoId());
+        if (servicoOpt.isEmpty()) {
+            throw new RuntimeException("Serviço não encontrado");
+        }
+
         Agendamento agendamento = new Agendamento();
-        agendamento.setTipoServico(new Servico()); // Ajustar a lógica para obter o Servico
-        agendamento.setClientId(agendamentoDTO.getClientId());
-        agendamento.setFuncionarioId(agendamentoDTO.getFuncionarioId());
-        agendamento.setVagaDisponivel(agendamentoDTO.isVagaDisponivel());
+        agendamento.setClientId(agendamentoDto.getClientId());
+        agendamento.setFuncionarioId(agendamentoDto.getFuncionarioId());
+        agendamento.setVagaDisponivel(agendamentoDto.isVagaDisponivel());
+        agendamento.setTipoServico(servicoOpt.get());
+
         return agendamentoRepository.save(agendamento);
     }
 
     @Transactional
-    public Agendamento updateAgendamento(int id, AgendamentoDto agendamentoDTO) {
-        Agendamento agendamento = agendamentoRepository.findById(id)
+    public Agendamento updateAgendamento(int id, AgendamentoDto agendamentoDto) {
+        Agendamento agendamentoExistente = agendamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
 
-        agendamento.setTipoServico(new Servico()); // Ajustar a lógica para obter o Servico
-        agendamento.setClientId(agendamentoDTO.getClientId());
-        agendamento.setFuncionarioId(agendamentoDTO.getFuncionarioId());
-        agendamento.setVagaDisponivel(agendamentoDTO.isVagaDisponivel());
+        Optional<Servico> servicoOpt = servicoService.consultarServico(agendamentoDto.getServicoId());
+        if (servicoOpt.isEmpty()) {
+            throw new RuntimeException("Serviço não encontrado");
+        }
 
-        return agendamentoRepository.save(agendamento);
+        agendamentoExistente.setClientId(agendamentoDto.getClientId());
+        agendamentoExistente.setFuncionarioId(agendamentoDto.getFuncionarioId());
+        agendamentoExistente.setVagaDisponivel(agendamentoDto.isVagaDisponivel());
+        agendamentoExistente.setTipoServico(servicoOpt.get());
+
+        return agendamentoRepository.save(agendamentoExistente);
     }
 
+    @Transactional
     public void deleteAgendamento(int id) {
         if (!agendamentoRepository.existsById(id)) {
             throw new RuntimeException("Agendamento não encontrado");
@@ -49,5 +65,9 @@ public class AgendamentoService {
     public Agendamento getAgendamentoById(int id) {
         return agendamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+    }
+
+    public List<Agendamento> listarAgendamentos() {
+        return agendamentoRepository.findAll();
     }
 }

@@ -7,6 +7,7 @@ import br.com.gjnv.petshop.model.Motorista;
 import br.com.gjnv.petshop.model.Servico;
 import br.com.gjnv.petshop.repository.ServicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +22,13 @@ public class ServicoService implements IServico {
 
 
     @Override
-    public List<Servico> consultarServico(int id) {
+    public List<Servico> listarServicos() {
         return servicoRepository.findAll();
+    }
+
+    @Override
+    public Optional<Servico> consultarServico(int id) {
+        return servicoRepository.findById(id);
     }
 
     @Override
@@ -34,12 +40,7 @@ public class ServicoService implements IServico {
     }
 
     @Override
-    public void agendarServico(int id, boolean vagaDisponivel) {
-        Optional<Servico> servico = servicoRepository.findById(id);
-        if (servico.isPresent() && vagaDisponivel) {
-            System.out.println("Serviço agendado: " + servico.get().getTipoServico());
-        } else {
-            System.out.println("Não foi possível agendar o serviço.");
-        }
+    public void adicionarServico(Servico servico) {
+        servicoRepository.save(servico);
     }
 }

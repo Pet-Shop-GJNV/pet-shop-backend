@@ -3,7 +3,7 @@ package br.com.gjnv.petshop.dto;
 public class AgendamentoDto {
 
     private int id;
-    private int tipoServicoId;
+    private int servicoId;
     private int clientId;
     private int funcionarioId;
     private boolean vagaDisponivel;
@@ -16,12 +16,12 @@ public class AgendamentoDto {
         this.id = id;
     }
 
-    public int getTipoServicoId() {
-        return tipoServicoId;
+    public int getServicoId() {
+        return servicoId;
     }
 
-    public void setTipoServicoId(int tipoServicoId) {
-        this.tipoServicoId = tipoServicoId;
+    public void setServicoId(int tipoServicoId) {
+        this.servicoId = tipoServicoId;
     }
 
     public int getClientId() {
