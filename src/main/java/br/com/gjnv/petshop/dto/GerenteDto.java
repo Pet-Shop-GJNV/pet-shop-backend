@@ -1,28 +1,22 @@
 package br.com.gjnv.petshop.dto;
 
+import br.com.gjnv.petshop.model.Motorista;
+
 import java.util.List;
+import java.util.UUID;
 
 public class GerenteDto {
-
-    private Long id;
+    private UUID id;
     private String setorResponsavel;
-    private List<Long> equipeIds;
+    private List<Motorista> equipe;
     private double metaMensal;
 
-    public GerenteDto() {}
-
-    public GerenteDto(Long id, String setorResponsavel, List<Long> equipeIds, double metaMensal) {
-        this.id = id;
-        this.setorResponsavel = setorResponsavel;
-        this.equipeIds = equipeIds;
-        this.metaMensal = metaMensal;
-    }
-
-    public Long getId() {
+    // Getters and Setters
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -34,12 +28,12 @@ public class GerenteDto {
         this.setorResponsavel = setorResponsavel;
     }
 
-    public List<Long> getEquipeIds() {
-        return equipeIds;
+    public List<Motorista> getEquipe() {
+        return equipe;
     }
 
-    public void setEquipeIds(List<Long> equipeIds) {
-        this.equipeIds = equipeIds;
+    public void setEquipe(List<Motorista> equipe) {
+        this.equipe = equipe;
     }
 
     public double getMetaMensal() {

@@ -32,11 +32,18 @@ public class MotoristaService {
 
     public Motorista save(Motorista motorista) {
         Endereco endereco = motorista.getEndereco();
-        if (endereco.getId() == null) {
+        if (endereco.getId() == null || endereco.getId() == 0) {
             endereco = enderecoRepository.save(endereco);
+        } else {
+            Optional<Endereco> existingEndereco = enderecoRepository.findById(endereco.getId());
+            if (existingEndereco.isEmpty()) {
+                endereco = enderecoRepository.save(endereco);
+            } else {
+                endereco = existingEndereco.get();
+            }
         }
         motorista.setEndereco(endereco);
-        motorista.setRotaAtual(null); // Inicializa rotaAtual como null
+        motorista.setRotaAtual(null); // Deixa rotaAtual como null
         return motoristaRepository.save(motorista);
     }
 //    public Motorista save(Motorista motorista) throws Exception {
@@ -54,16 +61,36 @@ public class MotoristaService {
 
     public Optional<Motorista> update(UUID id, Motorista motoristaDetails) {
         return motoristaRepository.findById(id).map(motorista -> {
+            motorista.setNome(motoristaDetails.getNome());
+            motorista.setCpf(motoristaDetails.getCpf());
+
+            // Atualiza o endereço existente
+            Endereco endereco = motorista.getEndereco();
+            Endereco enderecoDetails = motoristaDetails.getEndereco();
+            endereco.setRua(enderecoDetails.getRua());
+            endereco.setNumero(enderecoDetails.getNumero());
+            endereco.setCidade(enderecoDetails.getCidade());
+            endereco.setBairro(enderecoDetails.getBairro());
+            endereco.setComplemento(enderecoDetails.getComplemento());
+            enderecoRepository.save(endereco);
+
+            motorista.setTelefone(motoristaDetails.getTelefone());
+            motorista.setDataContratacao(motoristaDetails.getDataContratacao());
+            motorista.setHorarioTrabalho(motoristaDetails.getHorarioTrabalho());
+            motorista.setCargo(motoristaDetails.getCargo());
+            motorista.setSalario(motoristaDetails.getSalario());
             motorista.setCnh(motoristaDetails.getCnh());
             motorista.setVeiculo(motoristaDetails.getVeiculo());
-            motorista.setRotaAtual(motoristaDetails.getRotaAtual());
+            // Não altera rotaAtual
             return motoristaRepository.save(motorista);
         });
     }
 
     public boolean delete(UUID id) {
         return motoristaRepository.findById(id).map(motorista -> {
+            Endereco endereco = motorista.getEndereco();
             motoristaRepository.delete(motorista);
+            enderecoRepository.delete(endereco);
             return true;
         }).orElse(false);
     }

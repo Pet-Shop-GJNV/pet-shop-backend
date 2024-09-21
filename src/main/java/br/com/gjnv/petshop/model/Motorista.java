@@ -58,7 +58,7 @@ public class Motorista extends Funcionario {
         this.rotaAtual = endereco;
         System.out.println("Coleta realizada no endereço: " + endereco);
     }
-
+    // TODO: Como vai funcionar relizarColeta e realizarEntrega? Vai ter uma flag para dizer se ja fez o serviço?
     public void realizarEntrega(Endereco endereco) {
         this.rotaAtual = endereco;
         System.out.println("Entrega realizada no endereço: " + endereco);
