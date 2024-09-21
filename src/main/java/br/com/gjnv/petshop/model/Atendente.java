@@ -107,14 +107,13 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
         // Implementação do método
         return null;
     }
-
     @Override
-    public void excluirPet(Long id) {
+    public void atualizarPet(Object pet) {
         // Implementação do método
     }
 
     @Override
-    public void atualizarPet(Object pet) {
+    public void excluirPet(Long id) {
         // Implementação do método
     }
 
