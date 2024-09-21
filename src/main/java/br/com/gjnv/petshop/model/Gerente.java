@@ -7,7 +7,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Gerente extends Motorista implements IClienteManager {
+@Table(name = "gerentes")
+public class Gerente extends Funcionario implements IClienteManager {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

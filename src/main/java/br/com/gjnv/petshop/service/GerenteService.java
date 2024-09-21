@@ -63,8 +63,8 @@ public class GerenteService {
                 funcionario.setHorarioTrabalho(funcionarioDetails.getHorarioTrabalho());
                 funcionario.setCargo(funcionarioDetails.getCargo());
                 funcionario.setSalario(funcionarioDetails.getSalario());
-                //funcionario.setCnh(funcionarioDetails.getCnh());
-                //difuncionario.setVeiculo(funcionarioDetails.getVeiculo());
+                funcionario.setCnh(funcionarioDetails.getCnh());
+                funcionario.setVeiculo(funcionarioDetails.getVeiculo());
                 funcionarioRepository.save(funcionario);
             }
 
