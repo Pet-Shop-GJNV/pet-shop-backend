@@ -1,9 +1,16 @@
 package br.com.gjnv.petshop.model;
 
-import jakarta.persistence.*;
-
 import java.util.Date;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @MappedSuperclass
 public abstract class Funcionario {
@@ -38,6 +45,20 @@ public abstract class Funcionario {
 
     @Column(nullable = false)
     private double salario;
+
+    protected Funcionario(String nome, String cpf, Endereco endereco, String telefone, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.endereco = endereco;
+        this.telefone = telefone;
+        this.dataContratacao = dataContratacao;
+        this.horarioTrabalho = horarioTrabalho;
+        this.cargo = cargo;
+        this.salario = salario;
+    }
+
+    protected Funcionario() {
+    }
 
     public String getTelefone() {
         return telefone;

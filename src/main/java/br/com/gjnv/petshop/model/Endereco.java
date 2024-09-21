@@ -1,4 +1,5 @@
 package br.com.gjnv.petshop.model;
+import jakarta.persistence.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +16,17 @@ public class Endereco {
     private String bairro;
     private String cidade;
     private String complemento;
+
+    public Endereco() {
+    }
+
+    public Endereco(String rua, int numero, String bairro, String cidade, String complemento) {
+        this.rua = rua;
+        this.numero = numero;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.complemento = complemento;
+    }
 
     public String getBairro() {
         return bairro;
