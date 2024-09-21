@@ -48,8 +48,16 @@ public class AtendenteService {
 
     public Optional<Atendente> update(UUID id, Atendente atendenteDetails) {
         return atendenteRepository.findById(id).map(atendente -> {
+            atendente.setNome(atendenteDetails.getNome());
+            atendente.setCpf(atendenteDetails.getCpf());
+            atendente.setTelefone(atendenteDetails.getTelefone());
+            atendente.setDataContratacao(atendenteDetails.getDataContratacao());
+            atendente.setHorarioTrabalho(atendenteDetails.getHorarioTrabalho());
+            atendente.setCargo(atendenteDetails.getCargo());
+            atendente.setSalario(atendenteDetails.getSalario());
             atendente.setServicoRealizado(atendenteDetails.isServicoRealizado());
 
+            // Atualiza o endereço existente
             Endereco endereco = atendente.getEndereco();
             Endereco enderecoDetails = atendenteDetails.getEndereco();
             if (endereco != null && enderecoDetails != null) {

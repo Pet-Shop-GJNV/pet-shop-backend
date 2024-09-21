@@ -17,7 +17,7 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     private UUID id;
 
     @Column(nullable = false)
-    private boolean  servicoRealizado;
+    private boolean servicoRealizado;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
@@ -25,9 +25,9 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
 
     public Atendente() {}
 
-    public Atendente(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario, boolean servicoRealizado) {
+    public Atendente(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario ){
         super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);
-        this.servicoRealizado = servicoRealizado;
+        this.servicoRealizado = false;
     }
 
     public UUID getId() {
@@ -96,7 +96,7 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     public void atualizarCliente(Cliente cliente) {
         // Implementação do método
     }
-//TODO: trocar Object por Pet
+//TODO:  trocar Object por Pet
     @Override
     public void cadastrarPet(Object pet) {
         // Implementação do método
@@ -115,6 +115,26 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
 
     @Override
     public void atualizarPet(Object pet) {
+        // Implementação do método
+    }
+
+    public void realizarAtendimento() {
+        // Implementação do método
+    }
+
+    public void consultarAgenda() {
+        // Implementação do método
+    }
+
+    public void registrarServico() {
+        // Implementação do método
+    }
+
+    public void atualizarPagamento() {
+        // Implementação do método
+    }
+
+    public void atualizarStatusServico() {
         // Implementação do método
     }
 }

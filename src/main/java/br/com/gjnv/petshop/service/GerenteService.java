@@ -102,7 +102,7 @@ public class GerenteService {
             return gerenteRepository.save(gerente);
         });
     }
-
+// TODO: N ta funfando
     public boolean delete(UUID id) {
         return gerenteRepository.findById(id).map(gerente -> {
             Endereco endereco = gerente.getEndereco();
