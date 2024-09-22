@@ -1,15 +1,22 @@
 package br.com.gjnv.petshop.model;
 
-import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
+@MappedSuperclass
 public abstract class Funcionario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "UUID")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 

@@ -30,13 +30,21 @@ public class GerenteController {
     }
 
     @PostMapping
-    public Gerente createGerente(@RequestBody GerenteDto gerenteDto) {
-        return gerenteService.save(gerenteDto);
+    public Gerente createGerente(@RequestBody GerenteDto gerenteDTO) {
+        Gerente gerente = new Gerente();
+        gerente.setSetorResponsavel(gerenteDTO.getSetorResponsavel());
+        gerente.setEquipe(gerenteDTO.getEquipe());
+        gerente.setMetaMensal(gerenteDTO.getMetaMensal());
+        return gerenteService.save(gerente);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Gerente> updateGerente(@PathVariable UUID id, @RequestBody GerenteDto gerenteDto) {
-        Optional<Gerente> updatedGerente = gerenteService.update(id, gerenteDto);
+    public ResponseEntity<Gerente> updateGerente(@PathVariable UUID id, @RequestBody GerenteDto gerenteDTO) {
+        Gerente gerenteDetails = new Gerente();
+        gerenteDetails.setSetorResponsavel(gerenteDTO.getSetorResponsavel());
+        gerenteDetails.setEquipe(gerenteDTO.getEquipe());
+        gerenteDetails.setMetaMensal(gerenteDTO.getMetaMensal());
+        Optional<Gerente> updatedGerente = gerenteService.update(id, gerenteDetails);
         return updatedGerente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
