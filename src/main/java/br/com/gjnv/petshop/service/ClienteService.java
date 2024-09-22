@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
     @Autowired
     private AgendamentoService agendamentoService;
 
@@ -82,5 +84,9 @@ public class ClienteService {
     public List<ClienteDto> listarClientes() {
         List<Cliente> clientes = clienteRepository.findAll();
         return clientes.stream().map(this::convertToDTO).toList();
+    }
+
+    public Optional<Cliente> findById(Long id){
+        return clienteRepository.findById(id);
     }
 }

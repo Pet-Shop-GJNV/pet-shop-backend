@@ -1,22 +1,27 @@
 package br.com.gjnv.petshop.controller;
 
-import br.com.gjnv.petshop.dto.ClienteDto;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.gjnv.petshop.dto.PetDto;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.service.ClienteService;
 import br.com.gjnv.petshop.service.PetService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequestMapping("/pet")
 @RestController
@@ -24,6 +29,9 @@ public class PetController {
 
     @Autowired
     public PetService petService;
+
+    @Autowired
+    public ClienteService clienteService;
 
     @Autowired
     public ClienteRepository clienteRepository;

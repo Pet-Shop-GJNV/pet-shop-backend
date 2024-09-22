@@ -10,6 +10,7 @@ public class GerenteDto extends FuncionarioDto {
     private List<UUID> motoristasIds;
     private double metaMensal;
 
+
     public String getSetorResponsavel() {
         return setorResponsavel;
     }

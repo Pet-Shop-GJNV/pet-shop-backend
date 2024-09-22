@@ -1,8 +1,12 @@
 package br.com.gjnv.petshop.model;
 
 
-import br.com.gjnv.petshop.dto.ClienteDto;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Pet {
@@ -16,11 +20,10 @@ public class Pet {
     private String raca;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     public Pet() {}
-
 
     public Pet(long id, String nome, int idade, String raca, Cliente cliente) {
         this.id = id;

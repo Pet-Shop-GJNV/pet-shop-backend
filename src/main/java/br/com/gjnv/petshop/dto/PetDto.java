@@ -35,15 +35,20 @@ public class PetDto {
         return raca;
     }
 
+    public void setId(){
+        this.id = id;
+    }
+
+
     public void setRaca(String raca) {
         this.raca = raca;
     }
 
-    public Long getClienteId() {
+    public Long getClienteId(){
         return clienteId;
     }
 
-    public void setClienteId(Long clienteId) {
+    public void setClienteId(Long clienteId){
         this.clienteId = clienteId;
     }
 }
