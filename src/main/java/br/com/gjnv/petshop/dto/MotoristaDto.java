@@ -2,7 +2,7 @@ package br.com.gjnv.petshop.dto;
 
 import java.util.UUID;
 
-public class MotoristaDto {
+public class MotoristaDto extends FuncionarioDto{
 
     private UUID id;
     private String cnh;

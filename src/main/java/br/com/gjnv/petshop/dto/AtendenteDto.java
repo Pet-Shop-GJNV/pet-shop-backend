@@ -1,9 +1,10 @@
 package br.com.gjnv.petshop.dto;
 
+import br.com.gjnv.petshop.model.Atendente;
 import br.com.gjnv.petshop.model.Endereco;
 import java.util.UUID;
 
-public class AtendenteDto {
+public class AtendenteDto extends FuncionarioDto{
 
     private UUID id;
     private String setorAtendimento;
