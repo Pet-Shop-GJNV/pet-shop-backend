@@ -28,8 +28,8 @@ public class PetService {
         return petRepository.findById(id);
     }
 
-    public Pet save(Pet pet, Long clienteId) {
-        Optional<Cliente> dono = clienteRepository.findById(clienteId);
+    public Pet save(Pet pet) {
+        Optional<Cliente> dono = clienteRepository.findById(pet.getCliente().getId());
         if (dono.isPresent()) {
             pet.setCliente(dono.get());
             return petRepository.save(pet);
