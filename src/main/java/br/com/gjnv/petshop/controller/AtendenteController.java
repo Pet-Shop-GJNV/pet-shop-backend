@@ -2,8 +2,9 @@ package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.model.Atendente;
 import br.com.gjnv.petshop.model.Cliente;
+import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.service.AtendenteService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;  
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,5 +75,29 @@ public class AtendenteController {
     public ResponseEntity<Cliente> atualizarCliente(@RequestBody Cliente cliente) {
         atendenteService.atualizarCliente(cliente);
         return ResponseEntity.ok(cliente);
+    }
+
+    @PostMapping("/pets")
+    public ResponseEntity<Pet> cadastrarPet(@RequestParam Long clienteId, @RequestBody Pet pet) {
+        atendenteService.cadastrarPet(clienteId, pet);
+        return ResponseEntity.ok(pet);
+    }
+
+    @GetMapping("/pets/{id}")
+    public ResponseEntity<Pet> consultarPet(@PathVariable Long id) {
+        Pet pet = atendenteService.consultarPet(id);
+        return ResponseEntity.ok(pet);
+    }
+
+    @DeleteMapping("/pets/{id}")
+    public ResponseEntity<Void> excluirPet(@PathVariable Long id) {
+        atendenteService.excluirPet(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/pets")
+    public ResponseEntity<Pet> atualizarPet(@RequestBody Pet pet) {
+        atendenteService.atualizarPet(pet);
+        return ResponseEntity.ok(pet);
     }
 }

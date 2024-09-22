@@ -1,8 +1,9 @@
 package br.com.gjnv.petshop.manager;
-//TODO: trocar Object por Pet
+import br.com.gjnv.petshop.model.Pet;
+
 public interface IPetManager {
-    void cadastrarPet(Object pet);
-    Object consultarPet(Long id);
-    void atualizarPet(Object pet);
+    void cadastrarPet(Pet pet);
+    Pet consultarPet(Long id);
+    void atualizarPet(Pet pet);
     void excluirPet(Long id);
 }

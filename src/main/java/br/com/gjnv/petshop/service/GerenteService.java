@@ -1,17 +1,22 @@
 package br.com.gjnv.petshop.service;
 
-import br.com.gjnv.petshop.model.Endereco;
+import br.com.gjnv.petshop.dto.GerenteDto;
+import br.com.gjnv.petshop.model.Atendente;
+import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Gerente;
 import br.com.gjnv.petshop.model.Motorista;
-import br.com.gjnv.petshop.repository.EnderecoRepository;
-import br.com.gjnv.petshop.repository.GerenteRepository;
+import br.com.gjnv.petshop.repository.AtendenteRepository;
+import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.MotoristaRepository;
+import br.com.gjnv.petshop.repository.GerenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class GerenteService {
@@ -20,10 +25,13 @@ public class GerenteService {
     private GerenteRepository gerenteRepository;
 
     @Autowired
-    private MotoristaRepository funcionarioRepository;
+    private ClienteRepository clienteRepository;
 
     @Autowired
-    private EnderecoRepository enderecoRepository;
+    private AtendenteRepository atendenteRepository;
+
+    @Autowired
+    private MotoristaRepository motoristaRepository;
 
     public List<Gerente> findAll() {
         return gerenteRepository.findAll();
@@ -33,88 +41,73 @@ public class GerenteService {
         return gerenteRepository.findById(id);
     }
 
-    public Gerente save(Gerente gerente) {
-        Endereco endereco = gerente.getEndereco();
-        if (endereco != null) {
-            if (endereco.getId() == null) {
-                endereco = enderecoRepository.save(endereco);
-            } else {
-                Optional<Endereco> existingEndereco = enderecoRepository.findById(endereco.getId());
-                if (existingEndereco.isEmpty()) {
-                    endereco = enderecoRepository.save(endereco);
-                } else {
-                    endereco = existingEndereco.get();
-                }
-            }
-            gerente.setEndereco(endereco);
-        }
-
-        List<Motorista> equipe = gerente.getEquipe();
-        for (Motorista funcionario : equipe) {
-            if (funcionario.getId() == null) {
-                funcionarioRepository.save(funcionario);
-            } else {
-                Optional<Motorista> existingMotorista = funcionarioRepository.findById(funcionario.getId());
-                if (existingMotorista.isEmpty()) {
-                    funcionarioRepository.save(funcionario);
-                } else {
-                    funcionarioRepository.save(existingMotorista.get());
-                }
-            }
-        }
+    public Gerente save(GerenteDto gerenteDto) {
+        Gerente gerente = new Gerente();
+        preencherCamposGerente(gerente, gerenteDto);
         return gerenteRepository.save(gerente);
     }
 
-    public Optional<Gerente> update(UUID id, Gerente gerenteDetails) {
-        return gerenteRepository.findById(id).map(gerente -> {
-            gerente.setSetorResponsavel(gerenteDetails.getSetorResponsavel());
-            gerente.setMetaMensal(gerenteDetails.getMetaMensal());
+    public Optional<Gerente> update(UUID id, GerenteDto gerenteDto) {
+        Optional<Gerente> gerenteOptional = gerenteRepository.findById(id);
 
-            Endereco endereco = gerente.getEndereco();
-            Endereco enderecoDetails = gerenteDetails.getEndereco();
-            if (endereco != null && enderecoDetails != null) {
-                endereco.setRua(enderecoDetails.getRua());
-                endereco.setNumero(enderecoDetails.getNumero());
-                endereco.setCidade(enderecoDetails.getCidade());
-                endereco.setBairro(enderecoDetails.getBairro());
-                endereco.setComplemento(enderecoDetails.getComplemento());
-                enderecoRepository.save(endereco);
-            }
-
-            List<Motorista> equipe = gerente.getEquipe();
-            List<Motorista> equipeDetails = gerenteDetails.getEquipe();
-            for (int i = 0; i < equipe.size(); i++) {
-                Motorista funcionario = equipe.get(i);
-                Motorista funcionarioDetails = equipeDetails.get(i);
-                funcionario.setNome(funcionarioDetails.getNome());
-                funcionario.setCpf(funcionarioDetails.getCpf());
-                funcionario.setEndereco(funcionarioDetails.getEndereco());
-                funcionario.setTelefone(funcionarioDetails.getTelefone());
-                funcionario.setDataContratacao(funcionarioDetails.getDataContratacao());
-                funcionario.setHorarioTrabalho(funcionarioDetails.getHorarioTrabalho());
-                funcionario.setCargo(funcionarioDetails.getCargo());
-                funcionario.setSalario(funcionarioDetails.getSalario());
-                funcionario.setCnh(funcionarioDetails.getCnh());
-                funcionario.setVeiculo(funcionarioDetails.getVeiculo());
-                funcionarioRepository.save(funcionario);
-            }
-
-            return gerenteRepository.save(gerente);
-        });
+        if (gerenteOptional.isPresent()) {
+            Gerente gerente = gerenteOptional.get();
+            preencherCamposGerente(gerente, gerenteDto);
+            return Optional.of(gerenteRepository.save(gerente));
+        }
+        return Optional.empty();
     }
-// TODO: N ta funfando
+
     public boolean delete(UUID id) {
-        return gerenteRepository.findById(id).map(gerente -> {
-            Endereco endereco = gerente.getEndereco();
-            List<Motorista> equipe = gerente.getEquipe();
-            for (Motorista funcionario : equipe) {
-                funcionarioRepository.delete(funcionario);
-            }
-            gerenteRepository.delete(gerente);
-            if (endereco != null) {
-                enderecoRepository.delete(endereco);
-            }
+        Optional<Gerente> gerenteOptional = gerenteRepository.findById(id);
+        if (gerenteOptional.isPresent()) {
+            gerenteRepository.deleteById(id);
             return true;
-        }).orElse(false);
+        }
+        return false;
+    }
+
+    private void preencherCamposGerente(Gerente gerente, GerenteDto gerenteDto) {
+        gerente.setNome(gerenteDto.getNome());
+        gerente.setCpf(gerenteDto.getCpf());
+        gerente.setTelefone(gerenteDto.getTelefone());
+        gerente.setDataContratacao(new Date());
+        gerente.setSalario(gerenteDto.getSalario());
+        gerente.setHorarioTrabalho(gerenteDto.getHorarioTrabalho());
+        gerente.setCargo("Gerente");
+
+        gerente.setSetorResponsavel(gerenteDto.getSetorResponsavel());
+
+        List<Atendente> atendentes = atendenteRepository.findAllById(gerenteDto.getAtendentesIds());
+        List<Motorista> motoristas = motoristaRepository.findAllById(gerenteDto.getMotoristasIds());
+
+        gerente.setAtendentes(atendentes);
+        gerente.setMotoristas(motoristas);
+        gerente.setMetaMensal(gerenteDto.getMetaMensal());
+    }
+
+    public void cadastrarCliente(Cliente cliente) {
+        clienteRepository.save(cliente);
+    }
+
+    public Cliente consultarCliente(Long id) {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado."));
+    }
+
+    public void excluirCliente(Long id) {
+        if (clienteRepository.existsById(id)) {
+            clienteRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Cliente não encontrado.");
+        }
+    }
+
+    public void atualizarCliente(Cliente cliente) {
+        if (clienteRepository.existsById(cliente.getId())) {
+            clienteRepository.save(cliente);
+        } else {
+            throw new IllegalArgumentException("Cliente não encontrado.");
+        }
     }
 }

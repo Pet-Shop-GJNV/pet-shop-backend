@@ -23,15 +23,15 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    public Atendente() {
-        this.servicoRealizado = false;
-    }
-
     public Atendente(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
         super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);
         this.servicoRealizado = false;
     }
 
+    public Atendente() {
+        super();
+        this.servicoRealizado = false;
+    }
     public UUID getId() {
         return id;
     }
@@ -104,16 +104,16 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     }
 // OBS: Trocar Object por Pet
     @Override
-    public void cadastrarPet(Object pet) {
+    public void cadastrarPet(Pet pet) {
         // Lógica para cadastrar um pet
         //System.out.println("Pet cadastrado: " + pet.getNome());
     }
 
     @Override
-    public Object consultarPet(Long id) {
+    public Pet consultarPet(Long id) {
         // Lógica para consultar um pet
         System.out.println("Pet consultado com ID: " + id);
-       return new Object(); // Retorna um pet fictício
+       return new Pet(); // Retorna um pet fictício
     }
 
     @Override
@@ -123,7 +123,7 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     }
 
     @Override
-    public void atualizarPet(Object pet) {
+    public void atualizarPet(Pet pet) {
         // Lógica para atualizar um pet
          //System.out.println("Pet atualizado: " + pet.getNome());
     }

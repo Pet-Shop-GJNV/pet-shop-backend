@@ -3,9 +3,11 @@ package br.com.gjnv.petshop.service;
 import br.com.gjnv.petshop.model.Atendente;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Endereco;
+import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.AtendenteRepository;
 import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.EnderecoRepository;
+import br.com.gjnv.petshop.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,9 @@ public class AtendenteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private PetRepository petRepository;
+
     public List<Atendente> findAll() {
         return atendenteRepository.findAll();
     }
@@ -35,19 +40,17 @@ public class AtendenteService {
 
     public Atendente save(Atendente atendente) {
         Endereco endereco = atendente.getEndereco();
-        if (endereco != null) {
-            if (endereco.getId() == null) {
+        if (endereco.getId() == null || endereco.getId() == 0) {
+            endereco = enderecoRepository.save(endereco);
+        } else {
+            Optional<Endereco> existingEndereco = enderecoRepository.findById(endereco.getId());
+            if (existingEndereco.isEmpty()) {
                 endereco = enderecoRepository.save(endereco);
             } else {
-                Optional<Endereco> existingEndereco = enderecoRepository.findById(endereco.getId());
-                if (existingEndereco.isEmpty()) {
-                    endereco = enderecoRepository.save(endereco);
-                } else {
-                    endereco = existingEndereco.get();
-                }
+                endereco = existingEndereco.get();
             }
-            atendente.setEndereco(endereco);
         }
+        atendente.setServicoRealizado(false);
         return atendenteRepository.save(atendente);
     }
 
@@ -117,6 +120,38 @@ public class AtendenteService {
             clienteRepository.save(cliente);
         } else {
             throw new IllegalArgumentException("Cliente não encontrado.");
+        }
+    }
+//TODO: Falta alterar quando Nicolas mudar, para so puder cadastrar pet se tiver cliente
+public void cadastrarPet(Long clienteId, Pet pet) {
+    Optional<Cliente> clienteOpt = clienteRepository.findById(clienteId);
+    if (clienteOpt.isPresent()) {
+        Cliente cliente = clienteOpt.get();
+        pet.setCliente(cliente);
+        petRepository.save(pet);
+    } else {
+        throw new IllegalArgumentException("Cliente não encontrado.");
+    }
+}
+
+    public Pet consultarPet(Long id) {
+        return petRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pet não encontrado."));
+    }
+
+    public void excluirPet(Long id) {
+        if (petRepository.existsById(id)) {
+            petRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Pet não encontrado.");
+        }
+    }
+
+    public void atualizarPet(Pet pet) {
+        if (petRepository.existsById(pet.getId())) {
+            petRepository.save(pet);
+        } else {
+            throw new IllegalArgumentException("Pet não encontrado.");
         }
     }
 }
