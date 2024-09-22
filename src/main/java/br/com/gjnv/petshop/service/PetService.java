@@ -1,5 +1,6 @@
 package br.com.gjnv.petshop.service;
 
+import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,12 @@ import java.util.Optional;
 @Service
 public class PetService {
 
+    @Autowired
+    public Cliente clienteRepository;
 
     @Autowired
     public PetRepository petRepository;
+
 
     public List<Pet> findAll(){
         return petRepository.findAll();
@@ -28,8 +32,14 @@ public class PetService {
             return petRepository.findById(id);
     }
 
-    public Pet save(Pet pet){
-        return petRepository.save(pet);
+    public Pet save(Pet pet, Long clienteId){
+        Optional<Cliente> dono = clienteRepository.findById(clienteId);
+        if (dono.isPresent()){
+            pet.setCliente(dono.get());
+            return petRepository.save(pet);
+        } else {
+            throw new IllegalArgumentException("Cliente não encontrado");
+        }
     }
 
     public Pet updateById(Long id, Pet novoPet){

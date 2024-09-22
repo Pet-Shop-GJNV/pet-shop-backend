@@ -11,7 +11,6 @@ public class GerenteDto {
     private List<Motorista> equipe;
     private double metaMensal;
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }

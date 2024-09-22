@@ -17,6 +17,7 @@ import java.util.Optional;
 public class PetController {
 
 
+
     @Autowired
     public PetService petService;
 
@@ -38,9 +39,13 @@ public class PetController {
 
 
     @PostMapping
-    public ResponseEntity<Pet> createPet(@RequestBody Pet petPraSalvar){
-        petService.save(petPraSalvar);
-        return ResponseEntity.status(HttpStatus.CREATED).body(petPraSalvar);
+    public ResponseEntity<Pet> createPet(@RequestBody Pet petPraSalvar, @RequestParam Long clienteId){
+        try{
+            Pet novoPet = petService.save(petPraSalvar, clienteId);
+            return ResponseEntity.ok(novoPet);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{id}")

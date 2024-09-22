@@ -25,100 +25,122 @@ class PetControllerTest {
     @InjectMocks
     private PetController petController;
 
-    private Pet pet1;
-    private Pet pet2;
+    private Pet pet;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        pet1 = new Pet(1L, "Rex", 5, "Labrador", "João");
-        pet2 = new Pet(2L, "Max", 3, "Poodle", "Maria");
+        pet = new Pet();
+        pet.setId(1L);
+        pet.setNome("Rex");
     }
 
     @Test
-    public void testGetAllPets() {
-        List<Pet> pets = Arrays.asList(pet1, pet2);
-        when(petService.findAll()).thenReturn(pets);
+    void testGetAllPets() {
+        when(petService.findAll()).thenReturn(Arrays.asList(pet));
 
         ResponseEntity<List<Pet>> response = petController.getAllPets();
 
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
+        assertFalse(response.getBody().isEmpty());
+        assertEquals(1, response.getBody().size());
         verify(petService, times(1)).findAll();
     }
 
     @Test
-    public void testGetPetById_Found() {
-        when(petService.findById(1L)).thenReturn(Optional.of(pet1));
+    void testGetPetById_Success() {
+        when(petService.findById(1L)).thenReturn(Optional.of(pet));
 
         ResponseEntity<Pet> response = petController.getPetById(1L);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(pet1, response.getBody());
+        assertEquals(pet, response.getBody());
         verify(petService, times(1)).findById(1L);
     }
 
     @Test
-    public void testGetPetById_NotFound() {
+    void testGetPetById_NotFound() {
         when(petService.findById(1L)).thenReturn(Optional.empty());
 
         ResponseEntity<Pet> response = petController.getPetById(1L);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
         verify(petService, times(1)).findById(1L);
     }
 
     @Test
-    public void testCreatePet() {
-        when(petService.save(pet1)).thenReturn(pet1);
+    void testCreatePet_Success() {
+        when(petService.save(any(Pet.class), anyLong())).thenReturn(pet);
 
-        ResponseEntity<Pet> response = petController.createPet(pet1);
+        ResponseEntity<Pet> response = petController.createPet(pet, 1L);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(pet1, response.getBody());
-        verify(petService, times(1)).save(pet1);
-    }
-
-    @Test
-    public void testUpdatePetById_Found() {
-        when(petService.updateById(1L, pet2)).thenReturn(pet2);
-
-        ResponseEntity<Pet> response = petController.updatePetById(1L, pet2);
-
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(pet2, response.getBody());
-        verify(petService, times(1)).updateById(1L, pet2);
+        assertEquals(pet, response.getBody());
+        verify(petService, times(1)).save(any(Pet.class), anyLong());
     }
 
     @Test
-    public void testUpdatePetById_NotFound() {
-        when(petService.updateById(1L, pet2)).thenReturn(null);
+    void testCreatePet_BadRequest() {
+        when(petService.save(any(Pet.class), anyLong())).thenThrow(new IllegalArgumentException());
 
-        ResponseEntity<Pet> response = petController.updatePetById(1L, pet2);
+        ResponseEntity<Pet> response = petController.createPet(pet, 1L);
 
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(petService, times(1)).save(any(Pet.class), anyLong());
+    }
+
+    @Test
+    void testUpdatePetById_Success() {
+        when(petService.updateById(1L, pet)).thenReturn(pet);
+
+        ResponseEntity<Pet> response = petController.updatePetById(1L, pet);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(pet, response.getBody());
+        verify(petService, times(1)).updateById(1L, pet);
+    }
+
+    @Test
+    void testUpdatePetById_NotFound() {
+        when(petService.updateById(1L, pet)).thenReturn(null);
+
+        ResponseEntity<Pet> response = petController.updatePetById(1L, pet);
+
+        assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
-        verify(petService, times(1)).updateById(1L, pet2);
+        verify(petService, times(1)).updateById(1L, pet);
     }
 
     @Test
-    public void testDeletePetById_Success() {
+    void testDeletePetById_Success() {
+        // Mocking the service
         when(petService.delete(1L)).thenReturn(true);
 
         ResponseEntity<Boolean> response = petController.deletePetById(1L);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody());
         verify(petService, times(1)).delete(1L);
     }
 
     @Test
-    public void testDeletePetById_Failure() {
-        doThrow(new RuntimeException()).when(petService).delete(1L);
+    void testDeletePetById_NotFound() {
+        // Mocking the service to throw an exception
+        when(petService.delete(1L)).thenThrow(new RuntimeException());
 
         ResponseEntity<Boolean> response = petController.deletePetById(1L);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
         verify(petService, times(1)).delete(1L);

@@ -14,14 +14,13 @@ public class Pet {
     private int idade;
     private String raca;
 
-    // TODO trocar classe de object para cliente
-
-    private String cliente;
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
 
     public Pet() {}
 
-    // TODO trocar classe de object para cliente
-    public Pet(long id, String nome, int idade, String raca, String cliente) {
+    public Pet(long id, String nome, int idade, String raca, Cliente cliente) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -61,13 +60,11 @@ public class Pet {
         this.raca = raca;
     }
 
-    // TODO trocar classe de object para cliente
-    public String getCliente() {
+    public Cliente getCliente() {
         return cliente;
     }
 
-    // TODO trocar classe de object para cliente
-    public void setCliente(String cliente) {
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 }
