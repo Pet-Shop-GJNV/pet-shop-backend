@@ -1,12 +1,7 @@
 package br.com.gjnv.petshop.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Pet {
@@ -19,13 +14,14 @@ public class Pet {
     private int idade;
     private String raca;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    // TODO trocar classe de object para cliente
+
+    private String cliente;
 
     public Pet() {}
 
-    public Pet(long id, String nome, int idade, String raca, Cliente cliente) {
+    // TODO trocar classe de object para cliente
+    public Pet(long id, String nome, int idade, String raca, String cliente) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -65,11 +61,13 @@ public class Pet {
         this.raca = raca;
     }
 
-    public Cliente getCliente() {
+    // TODO trocar classe de object para cliente
+    public String getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    // TODO trocar classe de object para cliente
+    public void setCliente(String cliente) {
         this.cliente = cliente;
     }
 }
