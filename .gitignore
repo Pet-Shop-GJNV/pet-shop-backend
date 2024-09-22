@@ -664,6 +664,8 @@ gradle-app.setting
 
 .vscode/**
 
+target/
+target/*
 target/**
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,visualstudiocode,intellij,intellij+all,intellij+iml,eclipse,netbeans,maven,gradle,java,dotenv,jetbrains,jetbrains+iml,jetbrains+all
