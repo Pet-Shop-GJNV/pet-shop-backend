@@ -2,15 +2,11 @@ package br.com.gjnv.petshop.service;
 
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
+import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.PetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,23 +14,23 @@ import java.util.Optional;
 public class PetService {
 
     @Autowired
-    public Cliente clienteRepository;
+    public ClienteRepository clienteRepository;
 
     @Autowired
     public PetRepository petRepository;
 
 
-    public List<Pet> findAll(){
+    public List<Pet> findAll() {
         return petRepository.findAll();
     }
 
-    public Optional<Pet> findById(Long id){
-            return petRepository.findById(id);
+    public Optional<Pet> findById(Long id) {
+        return petRepository.findById(id);
     }
 
-    public Pet save(Pet pet, Long clienteId){
+    public Pet save(Pet pet, Long clienteId) {
         Optional<Cliente> dono = clienteRepository.findById(clienteId);
-        if (dono.isPresent()){
+        if (dono.isPresent()) {
             pet.setCliente(dono.get());
             return petRepository.save(pet);
         } else {
@@ -42,9 +38,9 @@ public class PetService {
         }
     }
 
-    public Pet updateById(Long id, Pet novoPet){
+    public Pet updateById(Long id, Pet novoPet) {
         Optional<Pet> petAntigo = findById(id);
-        if(petAntigo.isPresent()) {
+        if (petAntigo.isPresent()) {
             Pet p = petAntigo.get();
             p.setCliente(novoPet.getCliente());
             p.setIdade(novoPet.getIdade());
@@ -56,9 +52,9 @@ public class PetService {
         return null;
     }
 
-    public boolean delete(Long id){
+    public boolean delete(Long id) {
         Optional<Pet> pet = petRepository.findById(id);
-        if(pet.isPresent()){
+        if (pet.isPresent()) {
             petRepository.delete(pet.get());
             return true;
         }
