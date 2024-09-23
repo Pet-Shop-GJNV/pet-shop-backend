@@ -1,13 +1,9 @@
 package br.com.gjnv.petshop.model;
 
-import br.com.gjnv.petshop.model.Atendente;
-import br.com.gjnv.petshop.model.Cliente;
-import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.model.Pet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.Date;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 

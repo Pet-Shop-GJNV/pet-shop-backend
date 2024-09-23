@@ -12,10 +12,7 @@ public class PagamentoService {
     public PagamentoRepository pagamentoRepository;
 
     public boolean pagamentoPix(double valor, Servico servico) {
-        if (servico.getPreco() == valor) {
-            return true;
-        }
-        return false;
+        return servico.getPreco() == valor;
     }
 
     public String pagamentoDinheiro(double valor) {

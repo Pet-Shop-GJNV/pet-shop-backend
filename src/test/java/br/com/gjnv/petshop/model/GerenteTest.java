@@ -1,9 +1,5 @@
 package br.com.gjnv.petshop.model;
 
-import br.com.gjnv.petshop.model.Atendente;
-import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.model.Gerente;
-import br.com.gjnv.petshop.model.Motorista;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class GerenteTest {
 
@@ -79,7 +76,7 @@ class GerenteTest {
     @Test
     public void atualizandoListaDeMotoristas() {
         List<Motorista> novosMotoristas = new ArrayList<>();
-        novosMotoristas.add(new Motorista("Motorista 2", "22233344455", endereco, "4321-8765","ABC1234", "Carro", new Date(), "08:00-17:00", "Motorista", 2000.00));
+        novosMotoristas.add(new Motorista("Motorista 2", "22233344455", endereco, "4321-8765", "ABC1234", "Carro", new Date(), "08:00-17:00", "Motorista", 2000.00));
         gerente.setMotoristas(novosMotoristas);
         assertEquals(1, gerente.getMotoristas().size());
         assertEquals("Motorista 2", gerente.getMotoristas().get(0).getNome());

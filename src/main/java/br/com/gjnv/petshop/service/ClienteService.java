@@ -86,7 +86,7 @@ public class ClienteService {
         return clientes.stream().map(this::convertToDTO).toList();
     }
 
-    public Optional<Cliente> findById(Long id){
+    public Optional<Cliente> findById(Long id) {
         return clienteRepository.findById(id);
     }
 }

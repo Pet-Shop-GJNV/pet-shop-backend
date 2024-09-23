@@ -7,8 +7,8 @@ import br.com.gjnv.petshop.model.Gerente;
 import br.com.gjnv.petshop.model.Motorista;
 import br.com.gjnv.petshop.repository.AtendenteRepository;
 import br.com.gjnv.petshop.repository.ClienteRepository;
-import br.com.gjnv.petshop.repository.MotoristaRepository;
 import br.com.gjnv.petshop.repository.GerenteRepository;
+import br.com.gjnv.petshop.repository.MotoristaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class GerenteService {

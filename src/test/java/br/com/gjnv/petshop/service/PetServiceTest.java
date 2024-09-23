@@ -4,7 +4,6 @@ import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.PetRepository;
-import br.com.gjnv.petshop.service.PetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +53,7 @@ class PetServiceTest {
 
     @Test
     void testFindAll() {
-        when(petRepository.findAll()).thenReturn(Arrays.asList(pet));
+        when(petRepository.findAll()).thenReturn(Collections.singletonList(pet));
 
         List<Pet> pets = petService.findAll();
         assertEquals(1, pets.size());

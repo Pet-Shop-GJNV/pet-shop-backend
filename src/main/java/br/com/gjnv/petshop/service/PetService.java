@@ -1,6 +1,5 @@
 package br.com.gjnv.petshop.service;
 
-import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.PetRepository;

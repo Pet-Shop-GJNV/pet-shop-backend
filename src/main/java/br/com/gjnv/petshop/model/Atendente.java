@@ -5,7 +5,6 @@ import br.com.gjnv.petshop.manager.IPetManager;
 import jakarta.persistence.*;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -32,6 +31,7 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
         super();
         this.servicoRealizado = false;
     }
+
     public UUID getId() {
         return id;
     }

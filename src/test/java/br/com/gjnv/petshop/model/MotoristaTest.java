@@ -1,7 +1,5 @@
 package br.com.gjnv.petshop.model;
 
-import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.model.Motorista;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

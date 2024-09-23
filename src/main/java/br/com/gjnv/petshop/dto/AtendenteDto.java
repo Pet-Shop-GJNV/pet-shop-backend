@@ -1,6 +1,7 @@
 package br.com.gjnv.petshop.dto;
 
 import br.com.gjnv.petshop.model.Endereco;
+
 import java.util.UUID;
 
 public class AtendenteDto {
@@ -10,7 +11,8 @@ public class AtendenteDto {
     private boolean servicoRealizado;
     private Endereco endereco;
 
-    public AtendenteDto() {}
+    public AtendenteDto() {
+    }
 
     public AtendenteDto(UUID id, String setorAtendimento, boolean servicoRealizado, Endereco endereco) {
         this.id = id;

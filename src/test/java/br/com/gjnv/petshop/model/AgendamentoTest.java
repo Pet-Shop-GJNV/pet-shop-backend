@@ -1,9 +1,8 @@
 package br.com.gjnv.petshop.model;
 
-import br.com.gjnv.petshop.model.Agendamento;
-import br.com.gjnv.petshop.model.Servico;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AgendamentoTest {

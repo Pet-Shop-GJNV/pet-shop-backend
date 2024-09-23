@@ -2,6 +2,7 @@ package br.com.gjnv.petshop.model;
 
 import br.com.gjnv.petshop.manager.IClienteManager;
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity

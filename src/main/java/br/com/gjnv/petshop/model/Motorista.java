@@ -1,14 +1,9 @@
 package br.com.gjnv.petshop.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.Objects;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "motoristas")

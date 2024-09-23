@@ -1,15 +1,14 @@
 package br.com.gjnv.petshop.service;
 
-import java.util.List;
-import java.util.Optional;
-
+import br.com.gjnv.petshop.dto.EnderecoDto;
+import br.com.gjnv.petshop.exception.ResourceNotFoundException;
+import br.com.gjnv.petshop.model.Endereco;
+import br.com.gjnv.petshop.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.gjnv.petshop.exception.ResourceNotFoundException;
-import br.com.gjnv.petshop.dto.EnderecoDto;
-import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.repository.EnderecoRepository;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EnderecoService {

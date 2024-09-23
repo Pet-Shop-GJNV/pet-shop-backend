@@ -11,12 +11,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class GerenteControllerTest {
@@ -56,7 +54,7 @@ class GerenteControllerTest {
 
     @Test
     void testGetAllGerentes() {
-        when(gerenteService.findAll()).thenReturn(Arrays.asList(gerente));
+        when(gerenteService.findAll()).thenReturn(Collections.singletonList(gerente));
 
         List<Gerente> gerentes = gerenteController.getAllGerentes();
         assertEquals(1, gerentes.size());

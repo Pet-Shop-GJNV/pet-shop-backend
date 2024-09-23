@@ -1,10 +1,8 @@
 package br.com.gjnv.petshop.service;
 
 import br.com.gjnv.petshop.dto.GerenteDto;
-import br.com.gjnv.petshop.model.Atendente;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Gerente;
-import br.com.gjnv.petshop.model.Motorista;
 import br.com.gjnv.petshop.repository.AtendenteRepository;
 import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.repository.GerenteRepository;

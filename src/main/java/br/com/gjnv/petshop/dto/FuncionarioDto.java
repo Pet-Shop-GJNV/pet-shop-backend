@@ -1,6 +1,7 @@
 package br.com.gjnv.petshop.dto;
 
 import br.com.gjnv.petshop.model.Endereco;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,7 +17,8 @@ public class FuncionarioDto {
     private String cargo;
     private double salario;
 
-    public FuncionarioDto() {}
+    public FuncionarioDto() {
+    }
 
     public FuncionarioDto(UUID id, String nome, String cpf, Endereco endereco, String telefone, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
         this.id = id;

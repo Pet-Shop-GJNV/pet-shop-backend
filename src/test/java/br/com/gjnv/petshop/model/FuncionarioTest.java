@@ -1,14 +1,13 @@
 package br.com.gjnv.petshop.model;
 
-import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.model.Funcionario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class FuncionarioTest {
 

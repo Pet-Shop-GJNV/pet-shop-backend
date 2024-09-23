@@ -35,7 +35,7 @@ public class ClienteController {
     @Operation(summary = "Retorna um cliente especificado pelo ID")
     public ResponseEntity<ClienteDto> consultarCliente(@PathVariable Long id) {
         ClienteDto cliente = clienteService.consultarCliente(id);
-        return ResponseEntity.ok(cliente);  
+        return ResponseEntity.ok(cliente);
     }
 
     @PostMapping

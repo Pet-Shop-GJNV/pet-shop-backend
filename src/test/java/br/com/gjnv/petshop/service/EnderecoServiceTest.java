@@ -1,7 +1,7 @@
 package br.com.gjnv.petshop.service;
 
-import br.com.gjnv.petshop.exception.ResourceNotFoundException;
 import br.com.gjnv.petshop.dto.EnderecoDto;
+import br.com.gjnv.petshop.exception.ResourceNotFoundException;
 import br.com.gjnv.petshop.model.Endereco;
 import br.com.gjnv.petshop.repository.EnderecoRepository;
 import org.junit.jupiter.api.BeforeEach;

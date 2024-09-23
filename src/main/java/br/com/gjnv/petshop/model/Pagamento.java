@@ -15,7 +15,8 @@ public class Pagamento {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    public Pagamento() {}
+    public Pagamento() {
+    }
 
     public Pagamento(double valor, Cliente cliente) {
         this.valor = valor;

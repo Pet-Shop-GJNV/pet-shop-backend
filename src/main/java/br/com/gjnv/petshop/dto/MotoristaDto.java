@@ -9,7 +9,8 @@ public class MotoristaDto {
     private String veiculo;
     private UUID rotaAtualId;
 
-    public MotoristaDto() {}
+    public MotoristaDto() {
+    }
 
     public MotoristaDto(UUID id, String cnh, String veiculo, UUID rotaAtualId) {
         this.id = id;

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,7 +64,7 @@ class PetControllerTest {
     @Test
     void testGetAllPets() {
         // Simulando o retorno de uma lista de pets
-        when(petService.findAll()).thenReturn(Arrays.asList(pet));
+        when(petService.findAll()).thenReturn(Collections.singletonList(pet));
 
         ResponseEntity<List<PetDto>> response = petController.getAllPets();
         assertEquals(HttpStatus.OK, response.getStatusCode());
