@@ -11,12 +11,11 @@ public class PagamentoService {
     @Autowired
     public PagamentoRepository pagamentoRepository;
 
-    public String pagamentoPix(double valor, Servico servico) {
-        if (servico.getPreco() == valor){
-            return "Gerando chave pix / código QR. Valor: " + valor;
-        } else {
-            return "Valor invalido";
+    public boolean pagamentoPix(double valor, Servico servico) {
+        if (servico.getPreco() == valor) {
+            return true;
         }
+        return false;
     }
 
     public String pagamentoDinheiro(double valor) {

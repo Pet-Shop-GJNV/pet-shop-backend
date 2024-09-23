@@ -4,7 +4,7 @@ import br.com.gjnv.petshop.model.Servico;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Nested
 class PagamentoServiceTest {
@@ -18,9 +18,7 @@ class PagamentoServiceTest {
         servico.setPreco(100.0);
         String expectedResponse = "Gerando chave pix / código QR. Valor: " + valor;
 
-        String response = pagamentoService.pagamentoPix(valor, servico);
-
-        assertEquals(expectedResponse, response);
+        assertTrue(pagamentoService.pagamentoPix(valor, servico));
     }
 
     @Test
@@ -30,9 +28,8 @@ class PagamentoServiceTest {
         servico.setPreco(100.0);
         String expectedResponse = "Valor invalido";
 
-        String response = pagamentoService.pagamentoPix(valor, servico);
 
-        assertEquals(expectedResponse, response);
+        assertFalse(pagamentoService.pagamentoPix(valor, servico));
     }
 
     @Test

@@ -24,8 +24,10 @@ public class PagamentoController {
     @Operation(summary = "Realiza um pagamento via PIX")
     public ResponseEntity<String> realizarPagamentoPix(@RequestParam double valor, @RequestBody Servico servico) {
         try {
-            String resultado = pagamentoService.pagamentoPix(valor, servico);
-            return ResponseEntity.ok(resultado);
+            if (!pagamentoService.pagamentoPix(valor, servico)) {
+                return ResponseEntity.badRequest().body("Valor inválido.");
+            }
+            return ResponseEntity.ok("Pagamento realizado com sucesso.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Valor inválido.");
         }
