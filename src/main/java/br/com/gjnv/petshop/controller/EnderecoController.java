@@ -1,8 +1,8 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.EnderecoDto;
+import br.com.gjnv.petshop.facade.EnderecoFacade;
 import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.service.EnderecoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,41 +15,40 @@ import java.util.List;
 @Tag(name = "Endereços", description = "Gerencia os endereços")
 public class EnderecoController {
 
-
-    private final EnderecoService enderecoService;
+    private final EnderecoFacade enderecoFacade;
 
     @Autowired
-    public EnderecoController(EnderecoService enderecoService) {
-        this.enderecoService = enderecoService;
+    public EnderecoController(EnderecoFacade enderecoFacade) {
+        this.enderecoFacade = enderecoFacade;
     }
 
     @GetMapping
     @Operation(summary = "Retorna uma lista de endereços")
     public List<Endereco> listarEnderecos() {
-        return enderecoService.listarEnderecos();
+        return enderecoFacade.listarEnderecos();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Retorna um endereço especificado pelo ID")
     public Endereco buscarEnderecoPorId(@PathVariable long id) {
-        return enderecoService.buscarEnderecoPorId(id);
+        return enderecoFacade.buscarEnderecoPorId(id);
     }
 
     @PostMapping
     @Operation(summary = "Cria um novo endereço")
     public void adicionarEndereco(@RequestBody Endereco endereco) {
-        enderecoService.adicionarEndereco(endereco);
+        enderecoFacade.adicionarEndereco(endereco);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta um endereço existente")
     public void removerEndereco(@PathVariable long id) {
-        enderecoService.removerEndereco(id);
+        enderecoFacade.removerEndereco(id);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza um endereço existente")
-    public void atualizarEndereco(@PathVariable long id, @RequestBody EnderecoDto endereco) {
-        enderecoService.atualizarEndereco(id, endereco);
+    public void atualizarEndereco(@PathVariable long id, @RequestBody EnderecoDto enderecoDto) {
+        enderecoFacade.atualizarEndereco(id, enderecoDto);
     }
 }

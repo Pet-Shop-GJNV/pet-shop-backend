@@ -1,7 +1,7 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.facade.ServicoFacade;
 import br.com.gjnv.petshop.model.Servico;
-import br.com.gjnv.petshop.service.ServicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,40 +16,46 @@ import java.util.Optional;
 @Tag(name = "Serviços", description = "Gerencia os serviços")
 public class ServicoController {
 
-
-    private final ServicoService servicoService;
+    private final ServicoFacade servicoFacade;
 
     @Autowired
-    public ServicoController(ServicoService servicoService) {
-        this.servicoService = servicoService;
+    public ServicoController(ServicoFacade servicoFacade) {
+        this.servicoFacade = servicoFacade;
     }
 
     @GetMapping
     @Operation(summary = "Retorna todos os serviços")
     public List<Servico> consultarServico() {
-        return servicoService.listarServicos();
+        return servicoFacade.listarTodosServicos();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Retorna um serviço especificado pelo ID")
-    public Optional<Servico> consultarServico(@PathVariable int id) {
-        return servicoService.consultarServico(id);
+    public ResponseEntity<Servico> consultarServico(@PathVariable int id) {
+        Optional<Servico> servico = servicoFacade.consultarServicoPorId(id);
+        return servico.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta um serviço existente")
     public ResponseEntity<String> cancelarServico(@PathVariable int id) {
         try {
-            servicoService.cancelarServico(id);
+            servicoFacade.cancelarServico(id);
             return ResponseEntity.ok("Serviço cancelado com sucesso.");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Serviço não encontrado.");
         }
     }
 
-    @PostMapping("/adicionar/{id}")
-    @Operation(summary = "Adiciona um serviço a um endereço")
-    public void adicionarServico(@RequestBody Servico servico) {
-        servicoService.adicionarServico(servico);
+    @PostMapping("/adicionar")
+    @Operation(summary = "Adiciona um serviço")
+    public ResponseEntity<Void> adicionarServico(@RequestBody Servico servico) {
+        try {
+            servicoFacade.adicionarServico(servico);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

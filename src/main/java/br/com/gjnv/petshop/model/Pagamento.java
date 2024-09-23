@@ -12,15 +12,15 @@ public class Pagamento {
     private double valor;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    @JoinColumn(name = "servico_id")
+    private Servico servico;
 
     public Pagamento() {
     }
 
-    public Pagamento(double valor, Cliente cliente) {
+    public Pagamento(double valor, Servico servico) {
         this.valor = valor;
-        this.cliente = cliente;
+        this.servico = servico;
     }
 
     public Long getId() {
@@ -39,12 +39,12 @@ public class Pagamento {
         this.valor = valor;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public Servico getServico() {
+        return servico;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setServico(Servico servico) {
+        this.servico = servico;
     }
 
     public String pagamentoPix() {
