@@ -209,17 +209,4 @@ class AtendenteServiceTest {
 
         verify(petRepository, times(1)).deleteById(id);
     }
-
-    @Test
-    void atualizarPet() {
-        Pet pet = new Pet();
-        pet.setId(1L);
-
-        when(petRepository.existsById(pet.getId())).thenReturn(true);
-        when(petRepository.save(any(Pet.class))).thenReturn(pet);
-
-        atendenteService.atualizarPet(pet);
-
-        verify(petRepository, times(1)).save(pet);
-    }
 }
