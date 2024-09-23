@@ -38,7 +38,7 @@ public class PetService {
         if (pet.getIdade() < 0) {
             throw new PetIdadeInvalidaException();
         }
-        if(pet.getRaca() == null || pet.getRaca().isEmpty()) {
+        if (pet.getRaca() == null || pet.getRaca().isEmpty()) {
             throw new PetInvalidoException();
         }
         return petRepository.save(pet);

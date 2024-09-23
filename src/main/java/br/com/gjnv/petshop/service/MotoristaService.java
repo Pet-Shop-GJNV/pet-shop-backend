@@ -1,7 +1,7 @@
 package br.com.gjnv.petshop.service;
 
-import br.com.gjnv.petshop.exception.Motorista.MotoristaNaoEncontradoException;
 import br.com.gjnv.petshop.exception.Motorista.EnderecoInvalidoException;
+import br.com.gjnv.petshop.exception.Motorista.MotoristaNaoEncontradoException;
 import br.com.gjnv.petshop.model.Endereco;
 import br.com.gjnv.petshop.model.Motorista;
 import br.com.gjnv.petshop.repository.EnderecoRepository;
