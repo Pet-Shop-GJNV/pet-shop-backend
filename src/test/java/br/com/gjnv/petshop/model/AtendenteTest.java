@@ -19,7 +19,7 @@ public class AtendenteTest {
         enderecoMock = new Endereco();
         clienteMock = new Cliente();
         petMock = new Pet();
-        atendente = new Atendente("João", "123.456.789-00", enderecoMock, "9999-9999", "123456", "Carro", new Date(), "08:00 - 17:00", "Atendente", 2000.0);
+        atendente = new Atendente("João", "123.456.789-00", enderecoMock, "9999-9999", new Date(), "08:00 - 17:00", "Atendente", 2000.0);
     }
 
     @Test

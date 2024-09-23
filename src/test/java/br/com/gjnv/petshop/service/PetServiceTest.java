@@ -1,5 +1,7 @@
 package br.com.gjnv.petshop.service;
 
+import br.com.gjnv.petshop.exception.Pet.PetInvalidoException;
+import br.com.gjnv.petshop.exception.Pet.PetNaoEncontradoException;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.ClienteRepository;
@@ -10,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -107,11 +108,10 @@ class PetServiceTest {
     @Test
     void testUpdateByIdNotFound() {
         when(petRepository.findById(1L)).thenReturn(Optional.empty());
-
         Pet novoPet = new Pet();
-        Pet updatedPet = petService.updateById(1L, novoPet);
-
-        assertNull(updatedPet);
+        assertThrows(PetInvalidoException.class, () -> {
+            petService.updateById(1L, novoPet);
+        });
     }
 
     @Test
@@ -127,9 +127,9 @@ class PetServiceTest {
     @Test
     void testDeleteNotFound() {
         when(petRepository.findById(1L)).thenReturn(Optional.empty());
-
-        boolean deleted = petService.delete(1L);
-        assertFalse(deleted);
+        assertThrows(PetNaoEncontradoException.class, () -> {
+            petService.delete(1L);
+        });
         verify(petRepository, never()).delete(any(Pet.class));
     }
 }
