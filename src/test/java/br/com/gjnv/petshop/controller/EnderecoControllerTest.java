@@ -1,92 +1,97 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.EnderecoDto;
+import br.com.gjnv.petshop.facade.EnderecoFacade;
 import br.com.gjnv.petshop.model.Endereco;
-import br.com.gjnv.petshop.service.EnderecoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class EnderecoControllerTest {
+class EnderecoControllerTest {
+
+    @Mock
+    private EnderecoFacade enderecoFacade;
 
     @InjectMocks
     private EnderecoController enderecoController;
 
-    @Mock
-    private EnderecoService enderecoService;
+    private Endereco endereco;
+    private EnderecoDto enderecoDto;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        endereco = new Endereco();
+        enderecoDto = new EnderecoDto();
     }
 
     @Test
-    void testListarEnderecos() {
-        Endereco endereco1 = new Endereco();
-        Endereco endereco2 = new Endereco();
+    void listarEnderecos_DeveRetornarListaDeEnderecos() {
+        // Arrange
+        List<Endereco> enderecos = Arrays.asList(new Endereco(), new Endereco());
+        when(enderecoFacade.listarEnderecos()).thenReturn(enderecos);
 
-        when(enderecoService.listarEnderecos()).thenReturn(Arrays.asList(endereco1, endereco2));
+        // Act
+        List<Endereco> response = enderecoController.listarEnderecos();
 
-        List<Endereco> enderecos = enderecoController.listarEnderecos();
-
-        assertNotNull(enderecos);
-        assertEquals(2, enderecos.size());
+        // Assert
+        assertEquals(enderecos, response);
     }
 
     @Test
-    void testBuscarEnderecoPorId() {
-        long id = 1L;
-        Endereco endereco = new Endereco();
-        endereco.setId(id);
+    void buscarEnderecoPorId_DeveRetornarEndereco() {
+        // Arrange
+        long enderecoId = 1L;
+        when(enderecoFacade.buscarEnderecoPorId(enderecoId)).thenReturn(endereco);
 
-        when(enderecoService.buscarEnderecoPorId(id)).thenReturn(endereco);
+        // Act
+        Endereco response = enderecoController.buscarEnderecoPorId(enderecoId);
 
-        Endereco foundEndereco = enderecoController.buscarEnderecoPorId(id);
-
-        assertNotNull(foundEndereco);
-        assertEquals(id, foundEndereco.getId());
+        // Assert
+        assertEquals(endereco, response);
     }
 
     @Test
-    void testAdicionarEndereco() {
-        Endereco endereco = new Endereco();
-        endereco.setId(1L);
+    void adicionarEndereco_DeveAdicionarEndereco() {
+        // Arrange
+        doNothing().when(enderecoFacade).adicionarEndereco(endereco);
 
-        doNothing().when(enderecoService).adicionarEndereco(endereco);
-
+        // Act
         enderecoController.adicionarEndereco(endereco);
 
-        verify(enderecoService, times(1)).adicionarEndereco(endereco);
+        // Assert
+        verify(enderecoFacade, times(1)).adicionarEndereco(endereco);
     }
 
     @Test
-    void testRemoverEndereco() {
-        long id = 1L;
+    void removerEndereco_DeveRemoverEndereco() {
+        // Arrange
+        long enderecoId = 1L;
+        doNothing().when(enderecoFacade).removerEndereco(enderecoId);
 
-        doNothing().when(enderecoService).removerEndereco(id);
+        // Act
+        enderecoController.removerEndereco(enderecoId);
 
-        enderecoController.removerEndereco(id);
-
-        verify(enderecoService, times(1)).removerEndereco(id);
+        // Assert
+        verify(enderecoFacade, times(1)).removerEndereco(enderecoId);
     }
 
     @Test
-    void testAtualizarEndereco() {
-        long id = 1L;
-        EnderecoDto enderecoDto = new EnderecoDto();
+    void atualizarEndereco_DeveAtualizarEndereco() {
+        // Arrange
+        long enderecoId = 1L;
+        doNothing().when(enderecoFacade).atualizarEndereco(enderecoId, enderecoDto);
 
-        enderecoController.atualizarEndereco(id, enderecoDto);
+        // Act
+        enderecoController.atualizarEndereco(enderecoId, enderecoDto);
 
-        verify(enderecoService, times(1)).atualizarEndereco(id, enderecoDto);
+        // Assert
+        verify(enderecoFacade, times(1)).atualizarEndereco(enderecoId, enderecoDto);
     }
-
 }

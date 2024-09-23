@@ -1,196 +1,235 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.facade.AtendenteFacade;
 import br.com.gjnv.petshop.model.Atendente;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
-import br.com.gjnv.petshop.service.AtendenteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AtendenteControllerTest {
 
     @Mock
-    private AtendenteService atendenteService;
+    private AtendenteFacade atendenteFacade;
 
     @InjectMocks
     private AtendenteController atendenteController;
 
+    private UUID atendenteId;
+    private Atendente atendente;
+    private Cliente cliente;
+    private Pet pet;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        atendenteId = UUID.randomUUID();
+        atendente = new Atendente();
+        cliente = new Cliente();
+        pet = new Pet();
     }
 
     @Test
-    void getAllAtendentes() {
+    void getAllAtendentes_DeveRetornarListaDeAtendentes() {
+        // Arrange
         List<Atendente> atendentes = Arrays.asList(new Atendente(), new Atendente());
-        when(atendenteService.findAll()).thenReturn(atendentes);
+        when(atendenteFacade.getAllAtendentes()).thenReturn(atendentes);
 
-        List<Atendente> result = atendenteController.getAllAtendentes();
+        // Act
+        List<Atendente> response = atendenteController.getAllAtendentes();
 
-        assertEquals(2, result.size());
-        verify(atendenteService, times(1)).findAll();
+        // Assert
+        assertEquals(atendentes, response);
     }
 
     @Test
-    void getAtendenteById() {
-        UUID id = UUID.randomUUID();
-        Atendente atendente = new Atendente();
-        when(atendenteService.findById(id)).thenReturn(Optional.of(atendente));
+    void getAtendenteById_DeveRetornarAtendente() {
+        // Arrange
+        when(atendenteFacade.getAtendenteById(atendenteId)).thenReturn(Optional.of(atendente));
 
-        ResponseEntity<Atendente> response = atendenteController.getAtendenteById(id);
+        // Act
+        ResponseEntity<Atendente> response = atendenteController.getAtendenteById(atendenteId);
 
-        assertEquals(ResponseEntity.ok(atendente), response);
-        verify(atendenteService, times(1)).findById(id);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(atendente, response.getBody());
     }
 
     @Test
-    void createAtendente() {
-        Atendente atendente = new Atendente();
-        when(atendenteService.save(atendente)).thenReturn(atendente);
+    void getAtendenteById_DeveRetornarNotFound() {
+        // Arrange
+        when(atendenteFacade.getAtendenteById(atendenteId)).thenReturn(Optional.empty());
 
-        Atendente result = atendenteController.createAtendente(atendente);
+        // Act
+        ResponseEntity<Atendente> response = atendenteController.getAtendenteById(atendenteId);
 
-        assertEquals(atendente, result);
-        verify(atendenteService, times(1)).save(atendente);
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    void updateAtendente() {
-        UUID id = UUID.randomUUID();
-        Atendente atendenteDetails = new Atendente();
-        Atendente updatedAtendente = new Atendente();
-        when(atendenteService.update(id, atendenteDetails)).thenReturn(Optional.of(updatedAtendente));
+    void createAtendente_DeveCriarAtendente() {
+        // Arrange
+        when(atendenteFacade.createAtendente(atendente)).thenReturn(atendente);
 
-        ResponseEntity<Atendente> response = atendenteController.updateAtendente(id, atendenteDetails);
+        // Act
+        Atendente response = atendenteController.createAtendente(atendente);
 
-        assertEquals(ResponseEntity.ok(updatedAtendente), response);
-        verify(atendenteService, times(1)).update(id, atendenteDetails);
+        // Assert
+        assertEquals(atendente, response);
     }
 
     @Test
-    void deleteAtendente() {
-        UUID id = UUID.randomUUID();
-        when(atendenteService.delete(id)).thenReturn(true);
+    void updateAtendente_DeveRetornarAtendenteAtualizado() {
+        // Arrange
+        when(atendenteFacade.updateAtendente(atendenteId, atendente)).thenReturn(Optional.of(atendente));
 
-        ResponseEntity<Void> response = atendenteController.deleteAtendente(id);
+        // Act
+        ResponseEntity<Atendente> response = atendenteController.updateAtendente(atendenteId, atendente);
 
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(atendenteService, times(1)).delete(id);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(atendente, response.getBody());
     }
 
     @Test
-    void atualizarStatusServico() {
-        UUID id = UUID.randomUUID();
+    void updateAtendente_DeveRetornarNotFound() {
+        // Arrange
+        when(atendenteFacade.updateAtendente(atendenteId, atendente)).thenReturn(Optional.empty());
 
-        ResponseEntity<Void> response = atendenteController.atualizarStatusServico(id);
+        // Act
+        ResponseEntity<Atendente> response = atendenteController.updateAtendente(atendenteId, atendente);
 
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(atendenteService, times(1)).atualizarStatusServico(id);
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    void cadastrarCliente() {
-        Cliente cliente = new Cliente();
+    void deleteAtendente_DeveDeletarAtendenteComSucesso() {
+        // Arrange
+        when(atendenteFacade.deleteAtendente(atendenteId)).thenReturn(true);
 
+        // Act
+        ResponseEntity<Void> response = atendenteController.deleteAtendente(atendenteId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void deleteAtendente_DeveRetornarNotFound() {
+        // Arrange
+        when(atendenteFacade.deleteAtendente(atendenteId)).thenReturn(false);
+
+        // Act
+        ResponseEntity<Void> response = atendenteController.deleteAtendente(atendenteId);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void atualizarStatusServico_DeveAtualizarStatusComSucesso() {
+        // Arrange
+        doNothing().when(atendenteFacade).atualizarStatusServico(atendenteId);
+
+        // Act
+        ResponseEntity<Void> response = atendenteController.atualizarStatusServico(atendenteId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(atendenteFacade, times(1)).atualizarStatusServico(atendenteId);
+    }
+
+    @Test
+    void cadastrarCliente_DeveCadastrarNovoCliente() {
+        // Arrange
+        when(atendenteFacade.cadastrarCliente(cliente)).thenReturn(cliente);
+
+        // Act
         ResponseEntity<Cliente> response = atendenteController.cadastrarCliente(cliente);
 
-        assertEquals(ResponseEntity.ok(cliente), response);
-        verify(atendenteService, times(1)).cadastrarCliente(cliente);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(cliente, response.getBody());
     }
 
     @Test
-    void consultarCliente() {
-        Long id = 1L;
-        Cliente cliente = new Cliente();
-        when(atendenteService.consultarCliente(id)).thenReturn(cliente);
-
-        ResponseEntity<Cliente> response = atendenteController.consultarCliente(id);
-
-        assertEquals(ResponseEntity.ok(cliente), response);
-        verify(atendenteService, times(1)).consultarCliente(id);
-    }
-
-    @Test
-    void excluirCliente() {
-        Long id = 1L;
-
-        ResponseEntity<Void> response = atendenteController.excluirCliente(id);
-
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(atendenteService, times(1)).excluirCliente(id);
-    }
-
-
-    @Test
-    void atualizarCliente() {
+    void consultarCliente_DeveRetornarCliente() {
+        // Arrange
         Long clienteId = 1L;
-        Cliente cliente = new Cliente();
-        cliente.setId(clienteId);
+        when(atendenteFacade.consultarCliente(clienteId)).thenReturn(cliente);
 
-        doNothing().when(atendenteService).atualizarCliente(cliente);
+        // Act
+        ResponseEntity<Cliente> response = atendenteController.consultarCliente(clienteId);
 
-        ResponseEntity<Cliente> response = atendenteController.atualizarCliente(clienteId, cliente);
-
-        assertEquals(ResponseEntity.ok(cliente), response);
-        verify(atendenteService, times(1)).atualizarCliente(cliente);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(cliente, response.getBody());
     }
 
     @Test
-    void cadastrarPet() {
+    void excluirCliente_DeveExcluirClienteComSucesso() {
+        // Arrange
         Long clienteId = 1L;
-        Pet pet = new Pet();
+        doNothing().when(atendenteFacade).excluirCliente(clienteId);
 
+        // Act
+        ResponseEntity<Void> response = atendenteController.excluirCliente(clienteId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void cadastrarPet_DeveCadastrarNovoPet() {
+        // Arrange
+        Long clienteId = 1L;
+        when(atendenteFacade.cadastrarPet(clienteId, pet)).thenReturn(pet);
+
+        // Act
         ResponseEntity<Pet> response = atendenteController.cadastrarPet(clienteId, pet);
 
-        assertEquals(ResponseEntity.ok(pet), response);
-        verify(atendenteService, times(1)).cadastrarPet(clienteId, pet);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(pet, response.getBody());
     }
 
     @Test
-    void consultarPet() {
-        Long id = 1L;
-        Pet pet = new Pet();
-        when(atendenteService.consultarPet(id)).thenReturn(pet);
-
-        ResponseEntity<Pet> response = atendenteController.consultarPet(id);
-
-        assertEquals(ResponseEntity.ok(pet), response);
-        verify(atendenteService, times(1)).consultarPet(id);
-    }
-
-    @Test
-    void excluirPet() {
-        Long id = 1L;
-
-        ResponseEntity<Void> response = atendenteController.excluirPet(id);
-
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(atendenteService, times(1)).excluirPet(id);
-    }
-
-    @Test
-    void atualizarPet() {
+    void consultarPet_DeveRetornarPet() {
+        // Arrange
         Long petId = 1L;
-        Pet pet = new Pet();
-        pet.setId(petId);
+        when(atendenteFacade.consultarPet(petId)).thenReturn(pet);
 
-        doNothing().when(atendenteService).atualizarPet(pet);
+        // Act
+        ResponseEntity<Pet> response = atendenteController.consultarPet(petId);
 
-        ResponseEntity<Pet> response = atendenteController.atualizarPet(petId, pet);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(pet, response.getBody());
+    }
 
-        assertEquals(ResponseEntity.ok(pet), response);
-        verify(atendenteService, times(1)).atualizarPet(pet);
+    @Test
+    void excluirPet_DeveExcluirPetComSucesso() {
+        // Arrange
+        Long petId = 1L;
+        doNothing().when(atendenteFacade).excluirPet(petId);
+
+        // Act
+        ResponseEntity<Void> response = atendenteController.excluirPet(petId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }

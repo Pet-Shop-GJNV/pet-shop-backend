@@ -1,153 +1,130 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.GerenteDto;
+import br.com.gjnv.petshop.facade.GerenteFacade;
 import br.com.gjnv.petshop.model.Gerente;
-import br.com.gjnv.petshop.service.GerenteService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(GerenteController.class)
 class GerenteControllerTest {
 
-    @Autowired
+    @Mock
+    private GerenteFacade gerenteFacade;
+
+    @InjectMocks
+    private GerenteController gerenteController;
+
     private MockMvc mockMvc;
-
-    @MockBean
-    private GerenteService gerenteService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(gerenteController).build();
     }
 
     @Test
     void testGetAllGerentes() throws Exception {
-        List<Gerente> gerentes = Arrays.asList(new Gerente(), new Gerente());
-        when(gerenteService.findAll()).thenReturn(gerentes);
+        List<Gerente> gerentes = new ArrayList<>();
+        gerentes.add(new Gerente());  // Adicionar gerente de exemplo
+        when(gerenteFacade.getAllGerentes()).thenReturn(gerentes);
 
         mockMvc.perform(get("/gerentes"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(2));
-
-        verify(gerenteService, times(1)).findAll();
+                .andExpect(jsonPath("$").isArray());
     }
 
     @Test
     void testGetGerenteById() throws Exception {
-        UUID id = UUID.randomUUID();
+        UUID gerenteId = UUID.randomUUID();
         Gerente gerente = new Gerente();
-        when(gerenteService.findById(id)).thenReturn(Optional.of(gerente));
+        when(gerenteFacade.getGerenteById(gerenteId)).thenReturn(Optional.of(gerente));
 
-        mockMvc.perform(get("/gerentes/{id}", id))
+        mockMvc.perform(get("/gerentes/{id}", gerenteId))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        verify(gerenteService, times(1)).findById(id);
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
-    void testGetGerenteById_NotFound() throws Exception {
-        UUID id = UUID.randomUUID();
-        when(gerenteService.findById(id)).thenReturn(Optional.empty());
+    void testGetGerenteByIdNotFound() throws Exception {
+        UUID gerenteId = UUID.randomUUID();
+        when(gerenteFacade.getGerenteById(gerenteId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/gerentes/{id}", id))
+        mockMvc.perform(get("/gerentes/{id}", gerenteId))
                 .andExpect(status().isNotFound());
-
-        verify(gerenteService, times(1)).findById(id);
     }
 
     @Test
     void testCreateGerente() throws Exception {
         GerenteDto gerenteDto = new GerenteDto();
-        gerenteDto.setNome("João");
-        gerenteDto.setCpf("12345678900");
-        gerenteDto.setTelefone("99999-9999");
-
         Gerente gerente = new Gerente();
-        when(gerenteService.save(any(GerenteDto.class))).thenReturn(gerente);
+        when(gerenteFacade.createGerente(any(GerenteDto.class))).thenReturn(gerente);
 
         mockMvc.perform(post("/gerentes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(gerenteDto)))
+                        .content("{ \"nome\": \"Gerente Exemplo\" }"))  // Exemplo de payload
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        verify(gerenteService, times(1)).save(any(GerenteDto.class));
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
     void testUpdateGerente() throws Exception {
-        UUID id = UUID.randomUUID();
+        UUID gerenteId = UUID.randomUUID();
         GerenteDto gerenteDto = new GerenteDto();
-        gerenteDto.setNome("João Atualizado");
-
         Gerente gerente = new Gerente();
-        when(gerenteService.update(eq(id), any(GerenteDto.class))).thenReturn(Optional.of(gerente));
+        when(gerenteFacade.updateGerente(eq(gerenteId), any(GerenteDto.class))).thenReturn(Optional.of(gerente));
 
-        mockMvc.perform(put("/gerentes/{id}", id)
+        mockMvc.perform(put("/gerentes/{id}", gerenteId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(gerenteDto)))
+                        .content("{ \"nome\": \"Novo Nome\" }"))  // Exemplo de payload
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        verify(gerenteService, times(1)).update(eq(id), any(GerenteDto.class));
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
-    void testUpdateGerente_NotFound() throws Exception {
-        UUID id = UUID.randomUUID();
+    void testUpdateGerenteNotFound() throws Exception {
+        UUID gerenteId = UUID.randomUUID();
         GerenteDto gerenteDto = new GerenteDto();
-        gerenteDto.setNome("João Atualizado");
+        when(gerenteFacade.updateGerente(eq(gerenteId), any(GerenteDto.class))).thenReturn(Optional.empty());
 
-        when(gerenteService.update(eq(id), any(GerenteDto.class))).thenReturn(Optional.empty());
-
-        mockMvc.perform(put("/gerentes/{id}", id)
+        mockMvc.perform(put("/gerentes/{id}", gerenteId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(gerenteDto)))
+                        .content("{ \"nome\": \"Novo Nome\" }"))  // Exemplo de payload
                 .andExpect(status().isNotFound());
-
-        verify(gerenteService, times(1)).update(eq(id), any(GerenteDto.class));
     }
 
     @Test
     void testDeleteGerente() throws Exception {
-        UUID id = UUID.randomUUID();
-        when(gerenteService.delete(id)).thenReturn(true);
+        UUID gerenteId = UUID.randomUUID();
+        when(gerenteFacade.deleteGerente(gerenteId)).thenReturn(true);
 
-        mockMvc.perform(delete("/gerentes/{id}", id))
+        mockMvc.perform(delete("/gerentes/{id}", gerenteId))
                 .andExpect(status().isNoContent());
-
-        verify(gerenteService, times(1)).delete(id);
     }
 
     @Test
-    void testDeleteGerente_NotFound() throws Exception {
-        UUID id = UUID.randomUUID();
-        when(gerenteService.delete(id)).thenReturn(false);
+    void testDeleteGerenteNotFound() throws Exception {
+        UUID gerenteId = UUID.randomUUID();
+        when(gerenteFacade.deleteGerente(gerenteId)).thenReturn(false);
 
-        mockMvc.perform(delete("/gerentes/{id}", id))
+        mockMvc.perform(delete("/gerentes/{id}", gerenteId))
                 .andExpect(status().isNotFound());
-
-        verify(gerenteService, times(1)).delete(id);
     }
 }

@@ -1,29 +1,28 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.AgendamentoDto;
+import br.com.gjnv.petshop.facade.AgendamentoFacade;
 import br.com.gjnv.petshop.model.Agendamento;
-import br.com.gjnv.petshop.service.AgendamentoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 class AgendamentoControllerTest {
 
+    @Mock
+    private AgendamentoFacade agendamentoFacade;
+
     @InjectMocks
     private AgendamentoController agendamentoController;
-
-    @Mock
-    private AgendamentoService agendamentoService;
 
     @BeforeEach
     void setUp() {
@@ -31,72 +30,76 @@ class AgendamentoControllerTest {
     }
 
     @Test
-    void testListarAgendamentos() {
-        Agendamento agendamento1 = new Agendamento();
-        Agendamento agendamento2 = new Agendamento();
+    void listarAgendamentos_DeveRetornarListaDeAgendamentos() {
+        // Arrange
+        List<Agendamento> agendamentos = Arrays.asList(new Agendamento(), new Agendamento());
+        when(agendamentoFacade.listarAgendamentos()).thenReturn(agendamentos);
 
-        when(agendamentoService.listarAgendamentos()).thenReturn(Arrays.asList(agendamento1, agendamento2));
-
+        // Act
         ResponseEntity<List<Agendamento>> response = agendamentoController.listarAgendamentos();
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(2, response.getBody().size());
+        // Assert
+        assertEquals("Status code incorreto", HttpStatus.OK, response.getStatusCode());
+        assertEquals("Lista de agendamentos incorreta", agendamentos, response.getBody());
     }
 
     @Test
-    void testBuscarAgendamentoPorId() {
+    void buscarAgendamentoPorId_DeveRetornarAgendamentoPorId() {
+        // Arrange
         int id = 1;
         Agendamento agendamento = new Agendamento();
-        agendamento.setId(id);
+        when(agendamentoFacade.buscarAgendamentoPorId(id)).thenReturn(agendamento);
 
-        when(agendamentoService.getAgendamentoById(id)).thenReturn(agendamento);
-
+        // Act
         ResponseEntity<Agendamento> response = agendamentoController.buscarAgendamentoPorId(id);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(id, response.getBody().getId());
+        // Assert
+        assertEquals("Status code incorreto", HttpStatus.OK, response.getStatusCode());
+        assertEquals("Agendamento retornado incorreto", agendamento, response.getBody());
     }
 
     @Test
-    void testCriarAgendamento() {
+    void criarAgendamento_DeveRetornarNovoAgendamento() {
+        // Arrange
         AgendamentoDto agendamentoDto = new AgendamentoDto();
         Agendamento novoAgendamento = new Agendamento();
-        novoAgendamento.setId(1);
+        when(agendamentoFacade.criarAgendamento(agendamentoDto)).thenReturn(novoAgendamento);
 
-        when(agendamentoService.createAgendamento(agendamentoDto)).thenReturn(novoAgendamento);
-
+        // Act
         ResponseEntity<Agendamento> response = agendamentoController.criarAgendamento(agendamentoDto);
 
-        assertEquals(200, response.getStatusCodeValue());
+        // Assert
+        assertEquals("Status code incorreto", HttpStatus.OK, response.getStatusCode());
+        assertEquals("Novo agendamento incorreto", novoAgendamento, response.getBody());
     }
 
     @Test
-    void testAtualizarAgendamento() {
+    void atualizarAgendamento_DeveRetornarAgendamentoAtualizado() {
+        // Arrange
         int id = 1;
         AgendamentoDto agendamentoDto = new AgendamentoDto();
         Agendamento agendamentoAtualizado = new Agendamento();
-        agendamentoAtualizado.setId(id);
-        agendamentoDto.setId(id);
+        when(agendamentoFacade.atualizarAgendamento(id, agendamentoDto)).thenReturn(agendamentoAtualizado);
 
-        when(agendamentoService.createAgendamento(agendamentoDto)).thenReturn(agendamentoAtualizado);
-
-
-        when(agendamentoService.updateAgendamento(id, agendamentoDto)).thenReturn(agendamentoAtualizado);
-
+        // Act
         ResponseEntity<Agendamento> response = agendamentoController.atualizarAgendamento(id, agendamentoDto);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(id, response.getBody().getId());
+        // Assert
+        assertEquals("Status code incorreto", HttpStatus.OK, response.getStatusCode());
+        assertEquals("Agendamento atualizado incorreto", agendamentoAtualizado, response.getBody());
     }
 
     @Test
-    void testDeletarAgendamento() {
+    void deletarAgendamento_DeveDeletarAgendamentoComSucesso() {
+        // Arrange
         int id = 1;
+        doNothing().when(agendamentoFacade).deletarAgendamento(id);
 
-        doNothing().when(agendamentoService).deleteAgendamento(id);
-
+        // Act
         ResponseEntity<Void> response = agendamentoController.deletarAgendamento(id);
 
-        assertEquals(204, response.getStatusCodeValue());
+        // Assert
+        assertEquals("Status code incorreto", HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(agendamentoFacade, times(1)).deletarAgendamento(id);
     }
 }

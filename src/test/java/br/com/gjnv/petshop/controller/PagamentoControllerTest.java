@@ -1,81 +1,94 @@
 package br.com.gjnv.petshop.controller;
 
-import br.com.gjnv.petshop.model.Servico;
-import br.com.gjnv.petshop.service.PagamentoService;
+import br.com.gjnv.petshop.facade.PagamentoFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class PagamentoControllerTest {
+class PagamentoControllerTest {
+
+    @Mock
+    private PagamentoFacade pagamentoFacade;
 
     @InjectMocks
     private PagamentoController pagamentoController;
 
-    @Mock
-    private PagamentoService pagamentoService;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(pagamentoController).build();
     }
 
     @Test
-    void testRealizarPagamentoPix() {
-        double valor = 100.0;
-        Servico servico = new Servico();
-        servico.setPreco(100.0);
-        Boolean expectedResponse = true;
+    void testRealizarPagamentoPixSucesso() throws Exception {
+        when(pagamentoFacade.realizarPagamentoPix(anyDouble(), anyInt())).thenReturn(true);
 
-        when(pagamentoService.pagamentoPix(valor, servico)).thenReturn(expectedResponse);
-
-        ResponseEntity<String> response = pagamentoController.realizarPagamentoPix(valor, servico);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Pagamento realizado com sucesso.", response.getBody());
+        mockMvc.perform(post("/pagamento/pix")
+                        .param("valor", "100.00")
+                        .param("servicoId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Pagamento realizado com sucesso via PIX."));
     }
 
     @Test
-    void testRealizarPagamentoDinheiro() {
-        double valor = 50.0;
-        String expectedResponse = "efetue pagamento no estabelecimento";
+    void testRealizarPagamentoPixFalha() throws Exception {
+        when(pagamentoFacade.realizarPagamentoPix(anyDouble(), anyInt())).thenReturn(false);
 
-        when(pagamentoService.pagamentoDinheiro(valor)).thenReturn(expectedResponse);
-
-        ResponseEntity<String> response = pagamentoController.realizarPagamentoDinheiro(valor);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(expectedResponse, response.getBody());
+        mockMvc.perform(post("/pagamento/pix")
+                        .param("valor", "100.00")
+                        .param("servicoId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Valor inválido ou serviço não encontrado."));
     }
 
     @Test
-    void testRealizarPagamentoCredito() {
-        double valor = 150.0;
-        String expectedResponse = "efetue pagamento no estabelecimento";
+    void testRealizarPagamentoDinheiro() throws Exception {
+        when(pagamentoFacade.realizarPagamentoDinheiro(anyDouble(), anyInt())).thenReturn("Pagamento realizado com sucesso em dinheiro.");
 
-        when(pagamentoService.pagamentoCredito(valor)).thenReturn(expectedResponse);
-
-        ResponseEntity<String> response = pagamentoController.realizarPagamentoCredito(valor);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(expectedResponse, response.getBody());
+        mockMvc.perform(post("/pagamento/dinheiro")
+                        .param("valor", "100.00")
+                        .param("servicoId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Pagamento realizado com sucesso em dinheiro."));
     }
 
     @Test
-    void testRealizarPagamentoDebito() {
-        double valor = 75.0;
-        String expectedResponse = "efetue pagamento no estabelecimento";
+    void testRealizarPagamentoCredito() throws Exception {
+        when(pagamentoFacade.realizarPagamentoCredito(anyDouble(), anyInt())).thenReturn("Pagamento realizado com sucesso no crédito.");
 
-        when(pagamentoService.pagamentoDebito(valor)).thenReturn(expectedResponse);
+        mockMvc.perform(post("/pagamento/credito")
+                        .param("valor", "100.00")
+                        .param("servicoId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Pagamento realizado com sucesso no crédito."));
+    }
 
-        ResponseEntity<String> response = pagamentoController.realizarPagamentoDebito(valor);
+    @Test
+    void testRealizarPagamentoDebito() throws Exception {
+        when(pagamentoFacade.realizarPagamentoDebito(anyDouble(), anyInt())).thenReturn("Pagamento realizado com sucesso no débito.");
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(expectedResponse, response.getBody());
+        mockMvc.perform(post("/pagamento/debito")
+                        .param("valor", "100.00")
+                        .param("servicoId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Pagamento realizado com sucesso no débito."));
     }
 }

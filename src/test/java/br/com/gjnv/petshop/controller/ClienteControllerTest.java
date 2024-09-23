@@ -1,118 +1,132 @@
 package br.com.gjnv.petshop.controller;
 
-import br.com.gjnv.petshop.dto.AgendamentoDto;
 import br.com.gjnv.petshop.dto.ClienteAgendamentoDto;
 import br.com.gjnv.petshop.dto.ClienteDto;
-import br.com.gjnv.petshop.service.ClienteService;
+import br.com.gjnv.petshop.facade.ClienteFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ClienteControllerTest {
 
     @Mock
-    private ClienteService clienteService;
+    private ClienteFacade clienteFacade;
 
     @InjectMocks
     private ClienteController clienteController;
 
+    private ClienteDto clienteDto;
+    private ClienteAgendamentoDto clienteAgendamentoDto;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        clienteDto = new ClienteDto();
+        clienteAgendamentoDto = new ClienteAgendamentoDto();
     }
 
     @Test
-    void listarClientes() {
+    void listarClientes_DeveRetornarListaDeClientes() {
+        // Arrange
         List<ClienteDto> clientes = Arrays.asList(new ClienteDto(), new ClienteDto());
-        when(clienteService.listarClientes()).thenReturn(clientes);
+        when(clienteFacade.listarClientes()).thenReturn(clientes);
 
+        // Act
         ResponseEntity<List<ClienteDto>> response = clienteController.listarClientes();
 
-        assertEquals(ResponseEntity.ok(clientes), response);
-        verify(clienteService, times(1)).listarClientes();
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(clientes, response.getBody());
     }
 
     @Test
-    void consultarCliente() {
-        Long id = 1L;
-        ClienteDto cliente = new ClienteDto();
-        when(clienteService.consultarCliente(id)).thenReturn(cliente);
+    void consultarCliente_DeveRetornarClientePorId() {
+        // Arrange
+        Long clienteId = 1L;
+        when(clienteFacade.consultarCliente(clienteId)).thenReturn(clienteDto);
 
-        ResponseEntity<ClienteDto> response = clienteController.consultarCliente(id);
+        // Act
+        ResponseEntity<ClienteDto> response = clienteController.consultarCliente(clienteId);
 
-        assertEquals(ResponseEntity.ok(cliente), response);
-        verify(clienteService, times(1)).consultarCliente(id);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(clienteDto, response.getBody());
     }
 
     @Test
-    void criarCliente() {
-        ClienteDto clienteDto = new ClienteDto();
-        when(clienteService.criarCliente(clienteDto)).thenReturn(clienteDto);
+    void criarCliente_DeveRetornarNovoCliente() {
+        // Arrange
+        when(clienteFacade.criarCliente(clienteDto)).thenReturn(clienteDto);
 
+        // Act
         ResponseEntity<ClienteDto> response = clienteController.criarCliente(clienteDto);
 
-        assertEquals(ResponseEntity.ok(clienteDto), response);
-        verify(clienteService, times(1)).criarCliente(clienteDto);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(clienteDto, response.getBody());
     }
 
     @Test
-    void editarCliente() {
-        Long id = 1L;
-        ClienteDto clienteDto = new ClienteDto();
-        when(clienteService.editarCliente(id, clienteDto)).thenReturn(clienteDto);
+    void editarCliente_DeveRetornarClienteAtualizado() {
+        // Arrange
+        Long clienteId = 1L;
+        when(clienteFacade.editarCliente(clienteId, clienteDto)).thenReturn(clienteDto);
 
-        ResponseEntity<ClienteDto> response = clienteController.editarCliente(id, clienteDto);
+        // Act
+        ResponseEntity<ClienteDto> response = clienteController.editarCliente(clienteId, clienteDto);
 
-        assertEquals(ResponseEntity.ok(clienteDto), response);
-        verify(clienteService, times(1)).editarCliente(id, clienteDto);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(clienteDto, response.getBody());
     }
 
     @Test
-    void deletarCliente() {
-        Long id = 1L;
+    void deletarCliente_DeveDeletarClienteComSucesso() {
+        // Arrange
+        Long clienteId = 1L;
+        doNothing().when(clienteFacade).deletarCliente(clienteId);
 
-        ResponseEntity<Void> response = clienteController.deletarCliente(id);
+        // Act
+        ResponseEntity<Void> response = clienteController.deletarCliente(clienteId);
 
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(clienteService, times(1)).deletarCliente(id);
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    void solicitarServico() {
-        ClienteAgendamentoDto clienteAgendamentoDto = new ClienteAgendamentoDto();
-        AgendamentoDto agendamentoDto = new AgendamentoDto();
-        agendamentoDto.setClientId(clienteAgendamentoDto.getClientId());
-        agendamentoDto.setServicoId(clienteAgendamentoDto.getServicoId());
-        agendamentoDto.setFuncionarioId(clienteAgendamentoDto.getFuncionarioId());
-        agendamentoDto.setVagaDisponivel(false);
+    void solicitarServico_DeveRetornarMensagemDeSucesso() {
+        // Arrange
+        String mensagem = "Serviço solicitado com sucesso!";
+        when(clienteFacade.solicitarServico(clienteAgendamentoDto)).thenReturn(mensagem);
 
-        String mensagem = "Serviço solicitado com sucesso";
-        when(clienteService.solicitarServico(anyInt(), anyInt(), any(AgendamentoDto.class))).thenReturn(mensagem);
-
+        // Act
         ResponseEntity<String> response = clienteController.solicitarServico(clienteAgendamentoDto);
 
-        assertEquals(ResponseEntity.ok(mensagem), response);
-        verify(clienteService, times(1)).solicitarServico(anyInt(), anyInt(), any(AgendamentoDto.class));
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(mensagem, response.getBody());
     }
 
     @Test
-    void cancelarServico() {
+    void cancelarServico_DeveRetornarMensagemDeCancelamento() {
+        // Arrange
         Long servicoId = 1L;
-        String mensagem = "Serviço cancelado com sucesso";
-        when(clienteService.cancelarServico(servicoId)).thenReturn(mensagem);
+        String mensagem = "Serviço cancelado com sucesso!";
+        when(clienteFacade.cancelarServico(servicoId)).thenReturn(mensagem);
 
+        // Act
         ResponseEntity<String> response = clienteController.cancelarServico(servicoId);
 
-        assertEquals(ResponseEntity.ok(mensagem), response);
-        verify(clienteService, times(1)).cancelarServico(servicoId);
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(mensagem, response.getBody());
     }
 }

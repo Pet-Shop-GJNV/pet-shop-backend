@@ -1,96 +1,95 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.facade.ServicoFacade;
 import br.com.gjnv.petshop.model.Servico;
-import br.com.gjnv.petshop.service.ServicoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class ServicoControllerTest {
+class ServicoControllerTest {
+
+    @Mock
+    private ServicoFacade servicoFacade;
 
     @InjectMocks
     private ServicoController servicoController;
 
-    @Mock
-    private ServicoService servicoService;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(servicoController).build();
     }
 
     @Test
-    void testConsultarServicoList() {
-        Servico servico1 = new Servico();
-        servico1.setId(1);
-        Servico servico2 = new Servico();
-        servico2.setId(2);
+    void testConsultarTodosServicos() throws Exception {
+        when(servicoFacade.listarTodosServicos()).thenReturn(Collections.emptyList());
 
-        when(servicoService.listarServicos()).thenReturn(Arrays.asList(servico1, servico2));
-
-        List<Servico> servicos = servicoController.consultarServico();
-
-        assertNotNull(servicos);
-        assertEquals(2, servicos.size());
+        mockMvc.perform(get("/servicos")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
     }
 
     @Test
-    void testConsultarServicoById() {
-        int id = 1;
+    void testConsultarServicoByIdSuccess() throws Exception {
         Servico servico = new Servico();
-        servico.setId(id);
+        when(servicoFacade.consultarServicoPorId(anyInt())).thenReturn(Optional.of(servico));
 
-        when(servicoService.consultarServico(id)).thenReturn(Optional.of(servico));
-
-        Optional<Servico> foundServico = servicoController.consultarServico(id);
-
-        assertTrue(foundServico.isPresent());
-        assertEquals(id, foundServico.get().getId());
+        mockMvc.perform(get("/servicos/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{}"));
     }
 
     @Test
-    void testCancelarServicoSuccess() {
-        int id = 1;
+    void testConsultarServicoByIdNotFound() throws Exception {
+        when(servicoFacade.consultarServicoPorId(anyInt())).thenReturn(Optional.empty());
 
-        doNothing().when(servicoService).cancelarServico(id);
-
-        ResponseEntity<String> response = servicoController.cancelarServico(id);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Serviço cancelado com sucesso.", response.getBody());
+        mockMvc.perform(get("/servicos/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void testCancelarServicoNotFound() {
-        int id = 1;
-
-        doThrow(new RuntimeException("Serviço não encontrado.")).when(servicoService).cancelarServico(id);
-
-        ResponseEntity<String> response = servicoController.cancelarServico(id);
-
-        assertEquals(404, response.getStatusCodeValue());
-        assertEquals("Serviço não encontrado.", response.getBody());
+    void testCancelarServicoSuccess() throws Exception {
+        mockMvc.perform(delete("/servicos/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Serviço cancelado com sucesso."));
     }
 
     @Test
-    void testAdicionarServico() {
-        Servico servico = new Servico();
-        servico.setId(1);
+    void testAdicionarServicoSuccess() throws Exception {
+        mockMvc.perform(post("/servicos/adicionar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"descricao\": \"Serviço de banho\"}"))
+                .andExpect(status().isOk());
+    }
 
-        doNothing().when(servicoService).adicionarServico(servico);
+    @Test
+    void testAdicionarServicoBadRequest() throws Exception {
+        doThrow(new IllegalArgumentException()).when(servicoFacade).adicionarServico(any(Servico.class));
 
-        servicoController.adicionarServico(servico);
-
-        verify(servicoService, times(1)).adicionarServico(servico);
+        mockMvc.perform(post("/servicos/adicionar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"descricao\": \"Serviço de banho\"}"))
+                .andExpect(status().isBadRequest());
     }
 }

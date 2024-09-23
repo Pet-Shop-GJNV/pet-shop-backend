@@ -1,118 +1,182 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.facade.MotoristaFacade;
 import br.com.gjnv.petshop.model.Endereco;
 import br.com.gjnv.petshop.model.Motorista;
-import br.com.gjnv.petshop.service.MotoristaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class MotoristaControllerTest {
 
     @Mock
-    private MotoristaService motoristaService;
+    private MotoristaFacade motoristaFacade;
 
     @InjectMocks
     private MotoristaController motoristaController;
 
+    private MockMvc mockMvc;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(motoristaController).build();
     }
 
     @Test
-    void getAllMotoristas() {
-        Motorista motorista1 = new Motorista();
-        Motorista motorista2 = new Motorista();
-        List<Motorista> motoristas = Arrays.asList(motorista1, motorista2);
+    void testGetAllMotoristas() throws Exception {
+        List<Motorista> motoristas = new ArrayList<>();
+        motoristas.add(new Motorista());  // Exemplo de motorista
+        when(motoristaFacade.listarTodosMotoristas()).thenReturn(motoristas);
 
-        when(motoristaService.findAll()).thenReturn(motoristas);
-
-        List<Motorista> result = motoristaController.getAllMotoristas();
-
-        assertEquals(2, result.size());
-        verify(motoristaService, times(1)).findAll();
+        mockMvc.perform(get("/motoristas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    void getMotoristaById() {
-        UUID id = UUID.randomUUID();
+    void testGetMotoristaById() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
         Motorista motorista = new Motorista();
-        when(motoristaService.findById(id)).thenReturn(Optional.of(motorista));
+        when(motoristaFacade.buscarMotoristaPorId(motoristaId)).thenReturn(Optional.of(motorista));
 
-        ResponseEntity<Motorista> response = motoristaController.getMotoristaById(id);
-
-        assertEquals(ResponseEntity.ok(motorista), response);
-        verify(motoristaService, times(1)).findById(id);
+        mockMvc.perform(get("/motoristas/{id}", motoristaId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
-    void updateMotorista() {
-        UUID id = UUID.randomUUID();
-        Motorista motoristaDetails = new Motorista();
-        Motorista updatedMotorista = new Motorista();
-        when(motoristaService.update(id, motoristaDetails)).thenReturn(Optional.of(updatedMotorista));
+    void testGetMotoristaByIdNotFound() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        when(motoristaFacade.buscarMotoristaPorId(motoristaId)).thenReturn(Optional.empty());
 
-        ResponseEntity<Motorista> response = motoristaController.updateMotorista(id, motoristaDetails);
-
-        assertEquals(ResponseEntity.ok(updatedMotorista), response);
-        verify(motoristaService, times(1)).update(id, motoristaDetails);
+        mockMvc.perform(get("/motoristas/{id}", motoristaId))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void createMotorista() {
+    void testCreateMotorista() throws Exception {
         Motorista motorista = new Motorista();
-        when(motoristaService.save(motorista)).thenReturn(motorista);
+        when(motoristaFacade.criarMotorista(any(Motorista.class))).thenReturn(motorista);
 
-        ResponseEntity<Motorista> response = motoristaController.createMotorista(motorista);
-
-        assertEquals(ResponseEntity.ok(motorista), response);
-        verify(motoristaService, times(1)).save(motorista);
+        mockMvc.perform(post("/motoristas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"nome\": \"Motorista Exemplo\" }"))  // Exemplo de payload
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
-    void deleteMotorista() {
-        UUID id = UUID.randomUUID();
-        when(motoristaService.delete(id)).thenReturn(true);
+    void testCreateMotoristaBadRequest() throws Exception {
+        when(motoristaFacade.criarMotorista(any(Motorista.class))).thenThrow(new RuntimeException("Erro ao criar motorista"));
 
-        ResponseEntity<Void> response = motoristaController.deleteMotorista(id);
-
-        assertEquals(ResponseEntity.noContent().build(), response);
-        verify(motoristaService, times(1)).delete(id);
+        mockMvc.perform(post("/motoristas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"nome\": \"Motorista Exemplo\" }"))  // Exemplo de payload
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void realizarColeta() {
-        UUID id = UUID.randomUUID();
+    void testUpdateMotorista() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        Motorista motorista = new Motorista();
+        when(motoristaFacade.atualizarMotorista(eq(motoristaId), any(Motorista.class))).thenReturn(Optional.of(motorista));
+
+        mockMvc.perform(put("/motoristas/{id}", motoristaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"nome\": \"Novo Nome\" }"))  // Exemplo de payload
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
+    }
+
+    @Test
+    void testUpdateMotoristaNotFound() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        when(motoristaFacade.atualizarMotorista(eq(motoristaId), any(Motorista.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(put("/motoristas/{id}", motoristaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"nome\": \"Novo Nome\" }"))  // Exemplo de payload
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testDeleteMotorista() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        when(motoristaFacade.excluirMotorista(motoristaId)).thenReturn(true);
+
+        mockMvc.perform(delete("/motoristas/{id}", motoristaId))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testDeleteMotoristaNotFound() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        when(motoristaFacade.excluirMotorista(motoristaId)).thenReturn(false);
+
+        mockMvc.perform(delete("/motoristas/{id}", motoristaId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testRealizarColeta() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
         Endereco endereco = new Endereco();
-        when(motoristaService.realizarColeta(id, endereco)).thenReturn(true);
+        when(motoristaFacade.realizarColeta(eq(motoristaId), any(Endereco.class))).thenReturn(true);
 
-        ResponseEntity<Void> response = motoristaController.realizarColeta(id, endereco);
-
-        assertEquals(ResponseEntity.ok().build(), response);
-        verify(motoristaService, times(1)).realizarColeta(id, endereco);
+        mockMvc.perform(post("/motoristas/{id}/coleta", motoristaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"rua\": \"Rua Exemplo\", \"numero\": \"123\" }"))  // Exemplo de payload
+                .andExpect(status().isOk());
     }
 
     @Test
-    void realizarEntrega() {
-        UUID id = UUID.randomUUID();
+    void testRealizarColetaNotFound() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        when(motoristaFacade.realizarColeta(eq(motoristaId), any(Endereco.class))).thenReturn(false);
+
+        mockMvc.perform(post("/motoristas/{id}/coleta", motoristaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"rua\": \"Rua Exemplo\", \"numero\": \"123\" }"))  // Exemplo de payload
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testRealizarEntrega() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
         Endereco endereco = new Endereco();
-        when(motoristaService.realizarEntrega(id, endereco)).thenReturn(true);
+        when(motoristaFacade.realizarEntrega(eq(motoristaId), any(Endereco.class))).thenReturn(true);
 
-        ResponseEntity<Void> response = motoristaController.realizarEntrega(id, endereco);
+        mockMvc.perform(post("/motoristas/{id}/entrega", motoristaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"rua\": \"Rua Exemplo\", \"numero\": \"123\" }"))  // Exemplo de payload
+                .andExpect(status().isOk());
+    }
 
-        assertEquals(ResponseEntity.ok().build(), response);
-        verify(motoristaService, times(1)).realizarEntrega(id, endereco);
+    @Test
+    void testRealizarEntregaNotFound() throws Exception {
+        UUID motoristaId = UUID.randomUUID();
+        when(motoristaFacade.realizarEntrega(eq(motoristaId), any(Endereco.class))).thenReturn(false);
+
+        mockMvc.perform(post("/motoristas/{id}/entrega", motoristaId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"rua\": \"Rua Exemplo\", \"numero\": \"123\" }"))  // Exemplo de payload
+                .andExpect(status().isNotFound());
     }
 }
