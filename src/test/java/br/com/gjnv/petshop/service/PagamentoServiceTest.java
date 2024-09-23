@@ -1,5 +1,6 @@
 package br.com.gjnv.petshop.service;
 
+import br.com.gjnv.petshop.exception.Pagamento.ValorInvalidoException;
 import br.com.gjnv.petshop.model.Servico;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ class PagamentoServiceTest {
         double valor = 100.0;
         Servico servico = new Servico();
         servico.setPreco(100.0);
-        String expectedResponse = "Gerando chave pix / código QR. Valor: " + valor;
 
         assertTrue(pagamentoService.pagamentoPix(valor, servico));
     }
@@ -26,10 +26,8 @@ class PagamentoServiceTest {
         double valor = 50.0;
         Servico servico = new Servico();
         servico.setPreco(100.0);
-        String expectedResponse = "Valor invalido";
 
-
-        assertFalse(pagamentoService.pagamentoPix(valor, servico));
+        assertThrows(ValorInvalidoException.class, () -> pagamentoService.pagamentoPix(valor, servico));
     }
 
     @Test
