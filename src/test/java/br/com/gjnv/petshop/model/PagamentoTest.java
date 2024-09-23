@@ -12,7 +12,7 @@ class PagamentoTest {
 
     @BeforeEach
     public void setUp() {
-        Servico  servico= new Servico("Servico 1",  100.00, 60);
+        Servico servico = new Servico("Servico 1", 100.00, 60);
         pagamento = new Pagamento(100.00, servico);
     }
 

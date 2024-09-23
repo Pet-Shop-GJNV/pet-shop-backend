@@ -11,18 +11,8 @@ public class Gerente extends Funcionario implements IClienteManager {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;
-
-    public Endereco getEndereco(){
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco){
-        this.endereco = endereco;
-    }
-
     @Column(nullable = false)
     private String setorResponsavel;
-
     @OneToMany
     @JoinTable(
             name = "gerente_motoristas",
@@ -30,7 +20,6 @@ public class Gerente extends Funcionario implements IClienteManager {
             inverseJoinColumns = @JoinColumn(name = "motorista_id")
     )
     private List<Motorista> motoristas;
-
     @OneToMany
     @JoinTable(
             name = "gerente_atendentes",
@@ -38,9 +27,16 @@ public class Gerente extends Funcionario implements IClienteManager {
             inverseJoinColumns = @JoinColumn(name = "atendente_id")
     )
     private List<Atendente> atendentes;
-
     @Column(nullable = false)
     private double metaMensal;
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
 
     public String getSetorResponsavel() {
         return setorResponsavel;

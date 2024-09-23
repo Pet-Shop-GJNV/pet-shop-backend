@@ -2,7 +2,6 @@ package br.com.gjnv.petshop.dto;
 
 import br.com.gjnv.petshop.model.Endereco;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +14,8 @@ public class GerenteDto extends FuncionarioDto {
     private Long enderecoId;
     private Endereco endereco;
 
-    public GerenteDto() {}
+    public GerenteDto() {
+    }
 
     public GerenteDto(String setorResponsavel, List<UUID> atendentesIds, List<UUID> motoristasIds, double metaMensal) {
         this.setorResponsavel = setorResponsavel;
