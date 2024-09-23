@@ -1,6 +1,7 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.PetDto;
+import br.com.gjnv.petshop.dto.ShowDaFe;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.ClienteRepository;
@@ -87,8 +88,13 @@ public class PetController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza um pet existente")
-    public ResponseEntity<Pet> updatePetById(@PathVariable Long id, @RequestBody Pet petParaEditar) {
-        Pet pet = petService.updateById(id, petParaEditar);
+    public ResponseEntity<Pet> updatePetById(@PathVariable Long id, @RequestBody ShowDaFe petParaEditar) {
+        Optional<Cliente> cliente = clienteRepository.findById(petParaEditar.clienteId());
+        if (cliente.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        Pet petEditado = new Pet(petParaEditar.nome(), petParaEditar.idade(), petParaEditar.raca(), cliente.get());
+        Pet pet = petService.updateById(id, petEditado);
         if (pet != null) {
             return ResponseEntity.ok(pet);
         }
