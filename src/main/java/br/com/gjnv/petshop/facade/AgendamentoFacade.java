@@ -27,17 +27,14 @@ public class AgendamentoFacade {
     }
 
     public Agendamento criarAgendamento(AgendamentoDto agendamentoDto) {
-        // Aqui podemos adicionar validações ou lógica extra antes de criar o agendamento
         return agendamentoService.createAgendamento(agendamentoDto);
     }
 
     public Agendamento atualizarAgendamento(int id, AgendamentoDto agendamentoDto) {
-        // Validações ou lógica extra antes de atualizar o agendamento
         return agendamentoService.updateAgendamento(id, agendamentoDto);
     }
 
     public void deletarAgendamento(int id) {
-        // Lógica extra para validações antes da exclusão, se necessário
         agendamentoService.deleteAgendamento(id);
     }
 }

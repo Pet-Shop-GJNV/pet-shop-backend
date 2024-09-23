@@ -21,7 +21,6 @@ public class AtendenteFacade {
         this.atendenteService = atendenteService;
     }
 
-    // Operações com Atendentes
     public List<Atendente> getAllAtendentes() {
         return atendenteService.findAll();
     }
@@ -65,7 +64,6 @@ public class AtendenteFacade {
         return cliente;
     }
 
-    // Operações com Pets
     public Pet cadastrarPet(Long clienteId, Pet pet) {
         atendenteService.cadastrarPet(clienteId, pet);
         return pet;
