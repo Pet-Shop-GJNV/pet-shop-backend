@@ -22,9 +22,13 @@ public class PagamentoController {
 
     @PostMapping("/pix")
     @Operation(summary = "Realiza um pagamento via PIX")
-    public ResponseEntity<String> realizarPagamentoPix(@RequestParam double valor) {
-        String resultado = pagamentoService.pagamentoPix(valor);
-        return ResponseEntity.ok(resultado);
+    public ResponseEntity<String> realizarPagamentoPix(@RequestParam double valor, @RequestBody Servico servico) {
+        try {
+            String resultado = pagamentoService.pagamentoPix(valor, servico);
+            return ResponseEntity.ok(resultado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Valor inválido.");
+        }
     }
 
     @PostMapping("/dinheiro")
