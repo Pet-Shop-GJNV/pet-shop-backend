@@ -13,7 +13,7 @@ class PetTest {
     @BeforeEach
     public void setUp() {
         cliente = new Cliente("Cliente 1", "12345678900");
-        pet = new Pet(1, "Rex", 5, "Labrador", cliente);
+        pet = new Pet("Rex", 5, "Labrador", cliente);
     }
 
     @Test

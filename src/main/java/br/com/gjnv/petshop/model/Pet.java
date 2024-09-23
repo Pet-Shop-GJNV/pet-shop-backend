@@ -22,8 +22,7 @@ public class Pet {
     public Pet() {}
 
 
-    public Pet(long id, String nome, int idade, String raca, Cliente cliente) {
-        this.id = id;
+    public Pet(String nome, int idade, String raca, Cliente cliente) {
         this.nome = nome;
         this.idade = idade;
         this.raca = raca;
