@@ -1,168 +1,153 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.GerenteDto;
-import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Gerente;
 import br.com.gjnv.petshop.service.GerenteService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(GerenteController.class)
 class GerenteControllerTest {
 
-    @InjectMocks
-    private GerenteController gerenteController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private GerenteService gerenteService;
 
-    private Gerente gerente;
-    private GerenteDto gerenteDto;
-    private Cliente cliente;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        // Inicializando os objetos sem construtores específicos
-        gerente = new Gerente();
-        gerente.setId(UUID.randomUUID());
-        gerente.setNome("João");
-        gerente.setCpf("123456789");
-        gerente.setTelefone("987654321");
-
-        gerenteDto = new GerenteDto();
-        gerenteDto.setNome("João");
-        gerenteDto.setCpf("123456789");
-        gerenteDto.setTelefone("987654321");
-
-        cliente = new Cliente();
-        cliente.setId(1L);
-        cliente.setNome("Maria");
-        cliente.setCpf("123456789");
-        cliente.setTelefone("987654321");
     }
 
     @Test
-    void testGetAllGerentes() {
-        when(gerenteService.findAll()).thenReturn(Collections.singletonList(gerente));
+    void testGetAllGerentes() throws Exception {
+        List<Gerente> gerentes = Arrays.asList(new Gerente(), new Gerente());
+        when(gerenteService.findAll()).thenReturn(gerentes);
 
-        List<Gerente> gerentes = gerenteController.getAllGerentes();
-        assertEquals(1, gerentes.size());
-        assertEquals("João", gerentes.get(0).getNome());
+        mockMvc.perform(get("/gerentes"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(2));
+
+        verify(gerenteService, times(1)).findAll();
     }
 
     @Test
-    void testGetGerenteById() {
-        UUID id = gerente.getId();
+    void testGetGerenteById() throws Exception {
+        UUID id = UUID.randomUUID();
+        Gerente gerente = new Gerente();
         when(gerenteService.findById(id)).thenReturn(Optional.of(gerente));
 
-        ResponseEntity<Gerente> response = gerenteController.getGerenteById(id);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(gerente, response.getBody());
+        mockMvc.perform(get("/gerentes/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(gerenteService, times(1)).findById(id);
     }
 
     @Test
-    void testGetGerenteByIdNotFound() {
+    void testGetGerenteById_NotFound() throws Exception {
         UUID id = UUID.randomUUID();
         when(gerenteService.findById(id)).thenReturn(Optional.empty());
 
-        ResponseEntity<Gerente> response = gerenteController.getGerenteById(id);
-        assertEquals(404, response.getStatusCodeValue());
+        mockMvc.perform(get("/gerentes/{id}", id))
+                .andExpect(status().isNotFound());
+
+        verify(gerenteService, times(1)).findById(id);
     }
 
     @Test
-    void testCreateGerente() {
-        when(gerenteService.save(gerenteDto)).thenReturn(gerente);
+    void testCreateGerente() throws Exception {
+        GerenteDto gerenteDto = new GerenteDto();
+        gerenteDto.setNome("João");
+        gerenteDto.setCpf("12345678900");
+        gerenteDto.setTelefone("99999-9999");
 
-        Gerente createdGerente = gerenteController.createGerente(gerenteDto);
-        assertNotNull(createdGerente);
-        assertEquals("João", createdGerente.getNome());
+        Gerente gerente = new Gerente();
+        when(gerenteService.save(any(GerenteDto.class))).thenReturn(gerente);
+
+        mockMvc.perform(post("/gerentes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(gerenteDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(gerenteService, times(1)).save(any(GerenteDto.class));
     }
 
     @Test
-    void testUpdateGerente() {
-        UUID id = gerente.getId();
-        when(gerenteService.update(id, gerenteDto)).thenReturn(Optional.of(gerente));
-
-        ResponseEntity<Gerente> response = gerenteController.updateGerente(id, gerenteDto);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(gerente, response.getBody());
-    }
-
-    @Test
-    void testUpdateGerenteNotFound() {
+    void testUpdateGerente() throws Exception {
         UUID id = UUID.randomUUID();
-        when(gerenteService.update(id, gerenteDto)).thenReturn(Optional.empty());
+        GerenteDto gerenteDto = new GerenteDto();
+        gerenteDto.setNome("João Atualizado");
 
-        ResponseEntity<Gerente> response = gerenteController.updateGerente(id, gerenteDto);
-        assertEquals(404, response.getStatusCodeValue());
+        Gerente gerente = new Gerente();
+        when(gerenteService.update(eq(id), any(GerenteDto.class))).thenReturn(Optional.of(gerente));
+
+        mockMvc.perform(put("/gerentes/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(gerenteDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(gerenteService, times(1)).update(eq(id), any(GerenteDto.class));
     }
 
     @Test
-    void testDeleteGerente() {
-        UUID id = gerente.getId();
+    void testUpdateGerente_NotFound() throws Exception {
+        UUID id = UUID.randomUUID();
+        GerenteDto gerenteDto = new GerenteDto();
+        gerenteDto.setNome("João Atualizado");
+
+        when(gerenteService.update(eq(id), any(GerenteDto.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(put("/gerentes/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(gerenteDto)))
+                .andExpect(status().isNotFound());
+
+        verify(gerenteService, times(1)).update(eq(id), any(GerenteDto.class));
+    }
+
+    @Test
+    void testDeleteGerente() throws Exception {
+        UUID id = UUID.randomUUID();
         when(gerenteService.delete(id)).thenReturn(true);
 
-        ResponseEntity<Void> response = gerenteController.deleteGerente(id);
-        assertEquals(204, response.getStatusCodeValue());
+        mockMvc.perform(delete("/gerentes/{id}", id))
+                .andExpect(status().isNoContent());
+
+        verify(gerenteService, times(1)).delete(id);
     }
 
     @Test
-    void testDeleteGerenteNotFound() {
+    void testDeleteGerente_NotFound() throws Exception {
         UUID id = UUID.randomUUID();
         when(gerenteService.delete(id)).thenReturn(false);
 
-        ResponseEntity<Void> response = gerenteController.deleteGerente(id);
-        assertEquals(404, response.getStatusCodeValue());
-    }
+        mockMvc.perform(delete("/gerentes/{id}", id))
+                .andExpect(status().isNotFound());
 
-    @Test
-    void testCadastrarCliente() {
-        doNothing().when(gerenteService).cadastrarCliente(cliente);
-
-        ResponseEntity<Cliente> response = gerenteController.cadastrarCliente(cliente);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(cliente, response.getBody());
-    }
-
-    @Test
-    void testConsultarCliente() {
-        when(gerenteService.consultarCliente(1L)).thenReturn(cliente);
-
-        ResponseEntity<Cliente> response = gerenteController.consultarCliente(1L);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(cliente, response.getBody());
-    }
-
-    @Test
-    void testExcluirCliente() {
-        doNothing().when(gerenteService).excluirCliente(1L);
-
-        ResponseEntity<Void> response = gerenteController.excluirCliente(1L);
-        assertEquals(204, response.getStatusCodeValue());
-    }
-
-    @Test
-    void atualizarCliente() {
-        Long clienteId = 1L;
-        Cliente cliente = new Cliente();
-        cliente.setId(clienteId);
-
-        doNothing().when(gerenteService).atualizarCliente(cliente);
-
-        ResponseEntity<Cliente> response = gerenteController.atualizarCliente(clienteId, cliente);
-
-        assertEquals(ResponseEntity.ok(cliente), response);
-        verify(gerenteService, times(1)).atualizarCliente(cliente);
+        verify(gerenteService, times(1)).delete(id);
     }
 }

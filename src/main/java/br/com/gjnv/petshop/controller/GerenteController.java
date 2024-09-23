@@ -1,7 +1,6 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.GerenteDto;
-import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Gerente;
 import br.com.gjnv.petshop.service.GerenteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,15 +40,17 @@ public class GerenteController {
 
     @PostMapping
     @Operation(summary = "Cria um novo gerente")
-    public Gerente createGerente(@RequestBody GerenteDto gerenteDto) {
-        return gerenteService.save(gerenteDto);
+    public ResponseEntity<Gerente> createGerente(@RequestBody GerenteDto gerenteDto) {
+        Gerente gerente = gerenteService.save(gerenteDto);
+        return ResponseEntity.ok(gerente);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza um gerente existente")
     public ResponseEntity<Gerente> updateGerente(@PathVariable UUID id, @RequestBody GerenteDto gerenteDto) {
         Optional<Gerente> updatedGerente = gerenteService.update(id, gerenteDto);
-        return updatedGerente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return updatedGerente.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -60,34 +61,5 @@ public class GerenteController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @PostMapping("/clientes")
-    @Operation(summary = "Cadastra um novo cliente")
-    public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente cliente) {
-        gerenteService.cadastrarCliente(cliente);
-        return ResponseEntity.ok(cliente);
-    }
-
-    @GetMapping("/clientes/{id}")
-    @Operation(summary = "Consulta um cliente pelo ID")
-    public ResponseEntity<Cliente> consultarCliente(@PathVariable Long id) {
-        Cliente cliente = gerenteService.consultarCliente(id);
-        return ResponseEntity.ok(cliente);
-    }
-
-    @DeleteMapping("/clientes/{id}")
-    @Operation(summary = "Exclui um cliente pelo ID")
-    public ResponseEntity<Void> excluirCliente(@PathVariable Long id) {
-        gerenteService.excluirCliente(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/clientes/{id}")
-    @Operation(summary = "Atualiza um cliente pelo ID")
-    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
-        cliente.setId(id);
-        gerenteService.atualizarCliente(cliente);
-        return ResponseEntity.ok(cliente);
     }
 }

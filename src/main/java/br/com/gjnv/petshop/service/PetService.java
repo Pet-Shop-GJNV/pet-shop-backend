@@ -31,7 +31,6 @@ public class PetService {
         return petRepository.save(pet);
     }
 
-
     public Pet updateById(Long id, Pet novoPet) {
         Optional<Pet> petAntigo = findById(id);
         if (petAntigo.isPresent()) {

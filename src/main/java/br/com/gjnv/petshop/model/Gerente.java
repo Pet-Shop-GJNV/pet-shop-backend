@@ -8,6 +8,18 @@ import java.util.List;
 @Entity
 public class Gerente extends Funcionario implements IClienteManager {
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    private Endereco endereco;
+
+    public Endereco getEndereco(){
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco){
+        this.endereco = endereco;
+    }
+
     @Column(nullable = false)
     private String setorResponsavel;
 

@@ -1,5 +1,6 @@
 package br.com.gjnv.petshop.dto;
 
+// TODO verificar implicações da mudança do nome dessa bagaça (nome pode ser GuardaPet ou algo proximo)
 public record ShowDaFe(String nome, int idade, String raca, Long clienteId) {
     public ShowDaFe {
         if (nome == null || nome.isBlank()) {
