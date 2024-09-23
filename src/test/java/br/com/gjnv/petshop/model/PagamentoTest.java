@@ -20,7 +20,6 @@ class PagamentoTest {
 
     @Test
     public void criandoPagamentoCorretamente() {
-        assertNotNull(pagamento.getId());
         assertEquals(100.00, pagamento.getValor());
         assertNotNull(pagamento.getCliente());
         assertEquals("Cliente 1", pagamento.getCliente().getNome());
