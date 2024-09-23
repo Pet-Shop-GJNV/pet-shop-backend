@@ -14,6 +14,14 @@ public class Cliente {
     private String telefone;
     private String cpf;
 
+    public Cliente(String nome, String cpf) {
+        this.nome = nome;
+        this.cpf = cpf;
+    }
+
+    public Cliente() {
+    }
+
     public Long getId() {
         return id;
     }
