@@ -122,17 +122,17 @@ public class AtendenteService {
             throw new IllegalArgumentException("Cliente não encontrado.");
         }
     }
-//TODO: Falta alterar quando Nicolas mudar, para so puder cadastrar pet se tiver cliente
-public void cadastrarPet(Long clienteId, Pet pet) {
-    Optional<Cliente> clienteOpt = clienteRepository.findById(clienteId);
-    if (clienteOpt.isPresent()) {
-        Cliente cliente = clienteOpt.get();
-        pet.setCliente(cliente);
-        petRepository.save(pet);
-    } else {
-        throw new IllegalArgumentException("Cliente não encontrado.");
+
+    public void cadastrarPet(Long clienteId, Pet pet) {
+        Optional<Cliente> clienteOpt = clienteRepository.findById(clienteId);
+        if (clienteOpt.isPresent()) {
+            Cliente cliente = clienteOpt.get();
+            pet.setCliente(cliente);
+            petRepository.save(pet);
+        } else {
+            throw new IllegalArgumentException("Cliente não encontrado.");
+        }
     }
-}
 
     public Pet consultarPet(Long id) {
         return petRepository.findById(id)
@@ -149,7 +149,11 @@ public void cadastrarPet(Long clienteId, Pet pet) {
 
     public void atualizarPet(Pet pet) {
         if (petRepository.existsById(pet.getId())) {
-            petRepository.save(pet);
+            Pet Petexistente = petRepository.findById(pet.getId()).orElseThrow(() -> new IllegalArgumentException("Pet não encontrado."));
+            Petexistente.setNome(pet.getNome());
+            Petexistente.setRaca(pet.getRaca());
+            Petexistente.setIdade(pet.getIdade());
+            petRepository.save(Petexistente);
         } else {
             throw new IllegalArgumentException("Pet não encontrado.");
         }

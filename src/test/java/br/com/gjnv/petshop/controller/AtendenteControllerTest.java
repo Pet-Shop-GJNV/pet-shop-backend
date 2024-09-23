@@ -132,11 +132,16 @@ class AtendenteControllerTest {
         verify(atendenteService, times(1)).excluirCliente(id);
     }
 
+
     @Test
     void atualizarCliente() {
+        Long clienteId = 1L;
         Cliente cliente = new Cliente();
+        cliente.setId(clienteId);
 
-        ResponseEntity<Cliente> response = atendenteController.atualizarCliente(cliente);
+        doNothing().when(atendenteService).atualizarCliente(cliente);
+
+        ResponseEntity<Cliente> response = atendenteController.atualizarCliente(clienteId, cliente);
 
         assertEquals(ResponseEntity.ok(cliente), response);
         verify(atendenteService, times(1)).atualizarCliente(cliente);
@@ -177,9 +182,13 @@ class AtendenteControllerTest {
 
     @Test
     void atualizarPet() {
+        Long petId = 1L;
         Pet pet = new Pet();
+        pet.setId(petId);
 
-        ResponseEntity<Pet> response = atendenteController.atualizarPet(pet);
+        doNothing().when(atendenteService).atualizarPet(pet);
+
+        ResponseEntity<Pet> response = atendenteController.atualizarPet(petId, pet);
 
         assertEquals(ResponseEntity.ok(pet), response);
         verify(atendenteService, times(1)).atualizarPet(pet);

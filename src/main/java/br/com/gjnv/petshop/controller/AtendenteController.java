@@ -4,7 +4,7 @@ import br.com.gjnv.petshop.model.Atendente;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.service.AtendenteService;
-import org.springframework.beans.factory.annotation.Autowired;  
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,8 +71,9 @@ public class AtendenteController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/clientes")
-    public ResponseEntity<Cliente> atualizarCliente(@RequestBody Cliente cliente) {
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
+        cliente.setId(id);
         atendenteService.atualizarCliente(cliente);
         return ResponseEntity.ok(cliente);
     }
@@ -95,8 +96,9 @@ public class AtendenteController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/pets")
-    public ResponseEntity<Pet> atualizarPet(@RequestBody Pet pet) {
+    @PutMapping("/pets/{petId}")
+    public ResponseEntity<Pet> atualizarPet(@PathVariable Long petId, @RequestBody Pet pet) {
+        pet.setId(petId);
         atendenteService.atualizarPet(pet);
         return ResponseEntity.ok(pet);
     }

@@ -68,8 +68,9 @@ public class GerenteController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/clientes")
-    public ResponseEntity<Cliente> atualizarCliente(@RequestBody Cliente cliente) {
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente) {
+        cliente.setId(id);
         gerenteService.atualizarCliente(cliente);
         return ResponseEntity.ok(cliente);
     }

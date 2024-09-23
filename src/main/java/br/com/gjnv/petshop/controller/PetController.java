@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequestMapping("/pet")
@@ -81,21 +78,25 @@ public class PetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pet> updatePetById(@PathVariable Long id, @RequestBody Pet petParaEditar){
+    public ResponseEntity<Pet> updatePetById(@PathVariable Long id, @RequestBody Pet petParaEditar) {
         Pet pet = petService.updateById(id, petParaEditar);
-        if(pet != null) {
+        if (pet != null) {
             return ResponseEntity.ok(pet);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(pet);
 
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletePetById(@PathVariable Long id){
-        try{
-            return ResponseEntity.ok().body(petService.delete(id));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<Void> deletePetById(@PathVariable Long id) {
+        try {
+            if (petService.delete(id)) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

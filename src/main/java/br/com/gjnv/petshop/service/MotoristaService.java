@@ -18,8 +18,6 @@ public class MotoristaService {
     @Autowired
     private MotoristaRepository motoristaRepository;
 
-//    @Autowired
-//    private EnderecoService enderecoService;
     @Autowired
     private EnderecoRepository enderecoRepository;
 
@@ -47,18 +45,6 @@ public class MotoristaService {
         motorista.setRotaAtual(null); // Deixa rotaAtual como null
         return motoristaRepository.save(motorista);
     }
-//    public Motorista save(Motorista motorista) throws Exception {
-//
-//        Optional<Endereco> enderecoDoCaboclo = enderecoRepository.findById(motorista.getEndereco().getId());
-//        Optional<Endereco> enderecoDeEntregaDoCaboclo = enderecoRepository.findById(motorista.getRotaAtual().getId());
-//        Motorista paraSalvar;
-//        if (enderecoDoCaboclo.isEmpty() || enderecoDeEntregaDoCaboclo.isEmpty()) {
-//            throw new Exception("Endereço não encontrado");
-//        }
-//        paraSalvar = new Motorista(motorista.getNome(), motorista.getCpf(), enderecoDoCaboclo.get(), motorista.getTelefone(), motorista.getCnh(), motorista.getVeiculo(), enderecoDoCaboclo.get(), motorista.getDataContratacao(), motorista.getHorarioTrabalho(), motorista.getCargo(), motorista.getSalario());
-//        return motoristaRepository.save(paraSalvar);
-//
-//    }
 
     public Optional<Motorista> update(UUID id, Motorista motoristaDetails) {
         return motoristaRepository.findById(id).map(motorista -> {
