@@ -30,14 +30,14 @@ public class PagamentoControllerTest {
         double valor = 100.0;
         Servico servico = new Servico();
         servico.setPreco(100.0);
-        String expectedResponse = "Gerando chave pix / código QR. Valor: " + valor;
+        Boolean expectedResponse = true;
 
         when(pagamentoService.pagamentoPix(valor, servico)).thenReturn(expectedResponse);
 
         ResponseEntity<String> response = pagamentoController.realizarPagamentoPix(valor, servico);
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(expectedResponse, response.getBody());
+        assertEquals("Pagamento realizado com sucesso.", response.getBody());
     }
 
     @Test
