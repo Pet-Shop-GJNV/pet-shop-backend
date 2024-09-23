@@ -55,6 +55,7 @@ public class PetController {
         Optional<Pet> pet = petService.findById(id);
         if (pet.isPresent()) {
             PetDto dto = new PetDto();
+            dto.setId(pet.get().getId());
             dto.setNome(pet.get().getNome());
             dto.setIdade(pet.get().getIdade());
             dto.setRaca(pet.get().getRaca());

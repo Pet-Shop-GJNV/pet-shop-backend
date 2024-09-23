@@ -76,7 +76,6 @@ public class GerenteService {
         gerente.setSetorResponsavel(gerenteDto.getSetorResponsavel());
         gerente.setMetaMensal(gerenteDto.getMetaMensal());
 
-        // Tratamento para o Endereço
         if (gerenteDto.getEnderecoId() != null) {
             Endereco endereco = enderecoRepository.findById(gerenteDto.getEnderecoId())
                     .orElseThrow(() -> new IllegalArgumentException("Endereço não encontrado"));
@@ -87,7 +86,6 @@ public class GerenteService {
             gerente.setEndereco(novoEndereco);
         }
 
-        // Associando Atendentes e Motoristas
         List<Atendente> atendentes = atendenteRepository.findAllById(gerenteDto.getAtendentesIds());
         List<Motorista> motoristas = motoristaRepository.findAllById(gerenteDto.getMotoristasIds());
         gerente.setAtendentes(atendentes);
