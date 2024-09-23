@@ -9,32 +9,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class PagamentoTest {
 
     private Pagamento pagamento;
-    private Cliente cliente;
 
     @BeforeEach
     public void setUp() {
-        cliente = new Cliente("Cliente 1", "12345678900");
-        pagamento = new Pagamento(100.00, cliente);
+        Servico  servico= new Servico("Servico 1",  100.00, 60);
+        pagamento = new Pagamento(100.00, servico);
     }
 
     @Test
     public void criandoPagamentoCorretamente() {
         assertEquals(100.00, pagamento.getValor());
-        assertNotNull(pagamento.getCliente());
-        assertEquals("Cliente 1", pagamento.getCliente().getNome());
+        assertNotNull(pagamento.getServico());
     }
 
     @Test
     public void atualizandoValorPagamento() {
         pagamento.setValor(200.00);
         assertEquals(200.00, pagamento.getValor());
-    }
-
-    @Test
-    public void atualizandoClientePagamento() {
-        Cliente novoCliente = new Cliente("Cliente 2", "98765432100");
-        pagamento.setCliente(novoCliente);
-        assertEquals("Cliente 2", pagamento.getCliente().getNome());
     }
 
     @Test

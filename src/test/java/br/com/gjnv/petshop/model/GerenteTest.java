@@ -26,7 +26,7 @@ class GerenteTest {
         motoristas.add(new Motorista("Motorista 1", "12345678900", endereco, "1234-5678", "ABC1234", "Carro", new Date(), "08:00-17:00", "Motorista", 2000.00));
 
         atendentes = new ArrayList<>();
-        atendentes.add(new Atendente("Atendente 1", "09876543210", endereco, "9876-5432", "XYZ123", "Carro", new Date(), "08:00-17:00", "Atendente", 1500.00));
+        atendentes.add(new Atendente("Atendente 1", "09876543210", endereco, "9876-5432", new Date(), "08:00-17:00", "Atendente", 1500.00));
 
         gerente = new Gerente();
         gerente.setNome("Gerente 1");
@@ -84,7 +84,7 @@ class GerenteTest {
     @Test
     public void atualizandoListaDeAtendentes() {
         List<Atendente> novosAtendentes = new ArrayList<>();
-        novosAtendentes.add(new Atendente("Atendente 2", "33344455566", endereco, "8765-4321", "LMN789", "Moto", new Date(), "09:00-18:00", "Atendente", 1600.00));
+        novosAtendentes.add(new Atendente("Atendente 2", "33344455566", endereco, "8765-4321", new Date(), "09:00-18:00", "Atendente", 1600.00));
         gerente.setAtendentes(novosAtendentes);
         assertEquals(1, gerente.getAtendentes().size());
         assertEquals("Atendente 2", gerente.getAtendentes().get(0).getNome());

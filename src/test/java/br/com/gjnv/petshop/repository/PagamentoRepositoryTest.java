@@ -1,12 +1,10 @@
 package br.com.gjnv.petshop.repository;
 
-import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pagamento;
-import org.junit.jupiter.api.BeforeEach;
+import br.com.gjnv.petshop.model.Servico;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -22,55 +20,79 @@ class PagamentoRepositoryTest {
     private PagamentoRepository pagamentoRepository;
 
     @Autowired
-    private TestEntityManager testEntityManager;
+    private ServicoRepository servicoRepository;
 
-    private Pagamento pagamento;
-    private Cliente cliente;
-
-    @BeforeEach
-    void setUp() {
-        cliente = new Cliente();
-        cliente.setNome("Gabriel");
-        testEntityManager.persist(cliente);
-        testEntityManager.flush();
-
-        pagamento = new Pagamento(100.00, cliente);
-        testEntityManager.persist(pagamento);
-        testEntityManager.flush();
-    }
 
     @Test
-    void testFindAll() {
-        List<Pagamento> pagamentos = pagamentoRepository.findAll();
-        assertThat(pagamentos).hasSize(1);
-        assertThat(pagamentos.get(0).getValor()).isEqualTo(100.00);
-        assertThat(pagamentos.get(0).getCliente().getNome()).isEqualTo("Gabriel");
-    }
+    public void testFindAll() {
+        Servico servico = new Servico();
 
-    @Test
-    void testSave() {
-        Pagamento novoPagamento = new Pagamento(150.00, cliente);
-        pagamentoRepository.save(novoPagamento);
+        servicoRepository.save(servico);
+
+        Pagamento pagamento1 = new Pagamento(10.0, servico);
+        Pagamento pagamento2 = new Pagamento(20.0, servico);
+        pagamentoRepository.save(pagamento1);
+        pagamentoRepository.save(pagamento2);
+
         List<Pagamento> pagamentos = pagamentoRepository.findAll();
+
         assertThat(pagamentos).hasSize(2);
-        assertThat(pagamentos.get(1).getValor()).isEqualTo(150.00);
+        assertThat(pagamentos).contains(pagamento1, pagamento2);
+    }
+
+    @Test
+    public void testFindById() {
+        Servico servico = new Servico();
+        Pagamento pagamento = new Pagamento(10.0, servico);
+        pagamentoRepository.save(pagamento);
+
+        Optional<Pagamento> optionalPagamento = pagamentoRepository.findById(pagamento.getId());
+
+        assertThat(optionalPagamento).isPresent();
+        assertThat(optionalPagamento.get()).isEqualTo(pagamento);
     }
 
     @Test
     void testDelete() {
+        Servico servico = new Servico();
+        Pagamento pagamento = new Pagamento(10.0, servico);
+        pagamentoRepository.save(pagamento);
+
         pagamentoRepository.delete(pagamento);
-        testEntityManager.flush();
 
         List<Pagamento> pagamentos = pagamentoRepository.findAll();
+
         assertThat(pagamentos).isEmpty();
     }
 
     @Test
-    void testFindById() {
-        Long id = pagamento.getId();
-        Optional<Pagamento> foundPagamento = pagamentoRepository.findById(id);
-        assertThat(foundPagamento).isPresent();
-        assertThat(foundPagamento.get().getValor()).isEqualTo(100.00);
-        assertThat(foundPagamento.get().getCliente().getNome()).isEqualTo("Gabriel");
+    void testSave() {
+        Servico servico = new Servico();
+        servicoRepository.save(servico);
+
+        Pagamento pagamento = new Pagamento(10.0, servico);
+        pagamentoRepository.save(pagamento);
+
+        List<Pagamento> pagamentos = pagamentoRepository.findAll();
+
+        assertThat(pagamentos).hasSize(1);
+        assertThat(pagamentos.get(0)).isEqualTo(pagamento);
+    }
+
+    @Test
+    void testUpdate() {
+        Servico servico = new Servico();
+        servicoRepository.save(servico);
+
+        Pagamento pagamento = new Pagamento(10.0, servico);
+        pagamentoRepository.save(pagamento);
+
+        pagamento.setValor(20.0);
+        pagamentoRepository.save(pagamento);
+
+        List<Pagamento> pagamentos = pagamentoRepository.findAll();
+
+        assertThat(pagamentos).hasSize(1);
+        assertThat(pagamentos.get(0).getValor()).isEqualTo(20.0);
     }
 }
