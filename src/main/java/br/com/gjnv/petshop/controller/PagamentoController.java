@@ -1,5 +1,6 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.model.Servico;
 import br.com.gjnv.petshop.service.PagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,13 @@ public class PagamentoController {
     private PagamentoService pagamentoService;
 
     @PostMapping("/pix")
-    public ResponseEntity<String> realizarPagamentoPix(@RequestParam double valor) {
-        String resultado = pagamentoService.pagamentoPix(valor);
-        return ResponseEntity.ok(resultado);
+    public ResponseEntity<String> realizarPagamentoPix(@RequestParam double valor, @RequestBody Servico servico) {
+        try {
+            String resultado = pagamentoService.pagamentoPix(valor, servico);
+            return ResponseEntity.ok(resultado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Valor inválido.");
+        }
     }
 
     @PostMapping("/dinheiro")

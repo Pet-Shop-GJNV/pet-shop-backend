@@ -1,5 +1,6 @@
 package br.com.gjnv.petshop.controller;
 
+import br.com.gjnv.petshop.model.Servico;
 import br.com.gjnv.petshop.service.PagamentoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +28,13 @@ public class PagamentoControllerTest {
     @Test
     void testRealizarPagamentoPix() {
         double valor = 100.0;
-        String expectedResponse = "Gerando chave pix / código QR";
+        Servico servico = new Servico();
+        servico.setPreco(100.0);
+        String expectedResponse = "Gerando chave pix / código QR. Valor: " + valor;
 
-        when(pagamentoService.pagamentoPix(valor)).thenReturn(expectedResponse);
+        when(pagamentoService.pagamentoPix(valor, servico)).thenReturn(expectedResponse);
 
-        ResponseEntity<String> response = pagamentoController.realizarPagamentoPix(valor);
+        ResponseEntity<String> response = pagamentoController.realizarPagamentoPix(valor, servico);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(expectedResponse, response.getBody());
