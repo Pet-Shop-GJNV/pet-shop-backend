@@ -1,5 +1,7 @@
 package br.com.gjnv.petshop.service;
 
+import br.com.gjnv.petshop.exception.Motorista.MotoristaNaoEncontradoException;
+import br.com.gjnv.petshop.exception.Motorista.EnderecoInvalidoException;
 import br.com.gjnv.petshop.model.Endereco;
 import br.com.gjnv.petshop.model.Motorista;
 import br.com.gjnv.petshop.repository.EnderecoRepository;
@@ -71,27 +73,33 @@ public class MotoristaService {
     }
 
     public boolean delete(UUID id) {
-        return motoristaRepository.findById(id).map(motorista -> {
-            Endereco endereco = motorista.getEndereco();
-            motoristaRepository.delete(motorista);
-            enderecoRepository.delete(endereco);
-            return true;
-        }).orElse(false);
+        Motorista motorista = motoristaRepository.findById(id)
+                .orElseThrow(() -> new MotoristaNaoEncontradoException(id));
+        Endereco endereco = motorista.getEndereco();
+        motoristaRepository.delete(motorista);
+        enderecoRepository.delete(endereco);
+        return true;
     }
 
     public boolean realizarColeta(UUID id, Endereco endereco) {
-        return motoristaRepository.findById(id).map(motorista -> {
-            motorista.realizarColeta(endereco);
-            motoristaRepository.save(motorista);
-            return true;
-        }).orElse(false);
+        if (endereco == null) {
+            throw new EnderecoInvalidoException();
+        }
+        Motorista motorista = motoristaRepository.findById(id)
+                .orElseThrow(() -> new MotoristaNaoEncontradoException(id));
+        motorista.realizarColeta(endereco);
+        motoristaRepository.save(motorista);
+        return true;
     }
 
     public boolean realizarEntrega(UUID id, Endereco endereco) {
-        return motoristaRepository.findById(id).map(motorista -> {
-            motorista.realizarEntrega(endereco);
-            motoristaRepository.save(motorista);
-            return true;
-        }).orElse(false);
+        if (endereco == null) {
+            throw new EnderecoInvalidoException();
+        }
+        Motorista motorista = motoristaRepository.findById(id)
+                .orElseThrow(() -> new MotoristaNaoEncontradoException(id));
+        motorista.realizarEntrega(endereco);
+        motoristaRepository.save(motorista);
+        return true;
     }
 }
