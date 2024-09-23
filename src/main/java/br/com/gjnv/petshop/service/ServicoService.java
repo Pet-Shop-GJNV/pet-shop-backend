@@ -30,7 +30,8 @@ public class ServicoService implements IServico {
 
     @Override
     public void cancelarServico(int id) {
-        if (!servicoRepository.existsById(id)) {
+        Optional<Servico> servico = servicoRepository.findById(id);
+        if (servico.isEmpty()) {
             throw new ServicoNaoEncontradoException(id);
         }
         servicoRepository.deleteById(id);

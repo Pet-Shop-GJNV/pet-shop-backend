@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ServicoServiceTest {
+class ServicoServiceTest {
 
     @InjectMocks
     private ServicoService servicoService;
@@ -63,14 +63,17 @@ public class ServicoServiceTest {
 
         when(servicoRepository.findById(id)).thenReturn(Optional.of(servico));
 
-        servicoService.cancelarServico(id);
+        Optional<Servico> foundServico = servicoService.consultarServico(id);
+        assertTrue(foundServico.isPresent());
+
+        servicoService.cancelarServico(foundServico.get().getId());
 
         verify(servicoRepository, times(1)).deleteById(id);
     }
 
     @Test
     void testAdicionarServico() {
-        Servico servico = new Servico();
+        Servico servico = new Servico("Banho", 50.0, 60);
         servicoService.adicionarServico(servico);
         verify(servicoRepository, times(1)).save(servico);
     }

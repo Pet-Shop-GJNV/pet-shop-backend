@@ -16,6 +16,15 @@ public class Servico {
     private double preco;
     private int duracao;
 
+    public Servico() {
+    }
+
+    public Servico(String tipoServico, double preco, int duracao) {
+        this.tipoServico = tipoServico;
+        this.preco = preco;
+        this.duracao = duracao;
+    }
+
     public int getId() {
         return id;
     }
