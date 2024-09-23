@@ -77,7 +77,6 @@ class FuncionarioTest {
         assertEquals(novoEndereco, funcionario.getEndereco());
     }
 
-    // Implementação concreta da classe Funcionario apenas para fins de teste
     private static class FuncionarioTestImpl extends Funcionario {
         public FuncionarioTestImpl(String nome, String cpf, Endereco endereco, String telefone, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
             super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);

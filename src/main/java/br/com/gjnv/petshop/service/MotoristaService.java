@@ -41,7 +41,7 @@ public class MotoristaService {
             }
         }
         motorista.setEndereco(endereco);
-        motorista.setRotaAtual(null); // Deixa rotaAtual como null
+        motorista.setRotaAtual(null);
         return motoristaRepository.save(motorista);
     }
 
@@ -50,7 +50,6 @@ public class MotoristaService {
             motorista.setNome(motoristaDetails.getNome());
             motorista.setCpf(motoristaDetails.getCpf());
 
-            // Atualiza o endereço existente
             Endereco endereco = motorista.getEndereco();
             Endereco enderecoDetails = motoristaDetails.getEndereco();
             endereco.setRua(enderecoDetails.getRua());
@@ -67,7 +66,6 @@ public class MotoristaService {
             motorista.setSalario(motoristaDetails.getSalario());
             motorista.setCnh(motoristaDetails.getCnh());
             motorista.setVeiculo(motoristaDetails.getVeiculo());
-            // Não altera rotaAtual
             return motoristaRepository.save(motorista);
         });
     }

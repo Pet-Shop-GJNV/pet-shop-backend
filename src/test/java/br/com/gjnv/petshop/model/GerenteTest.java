@@ -22,7 +22,6 @@ class GerenteTest {
     public void setUp() {
         endereco = new Endereco("Rua A", 123, "Bairro B", "Cidade C", "Apt 45");
 
-        // Inicializando listas de Motoristas e Atendentes
         motoristas = new ArrayList<>();
         motoristas.add(new Motorista("Motorista 1", "12345678900", endereco, "1234-5678", "ABC1234", "Carro", new Date(), "08:00-17:00", "Motorista", 2000.00));
 

@@ -36,7 +36,6 @@ class PetServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Inicializando Cliente e Pet
         cliente = new Cliente();
         cliente.setId(1L);
         cliente.setNome("Maria");

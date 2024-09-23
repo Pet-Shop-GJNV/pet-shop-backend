@@ -1,172 +1,194 @@
 package br.com.gjnv.petshop.controller;
 
 import br.com.gjnv.petshop.dto.PetDto;
+import br.com.gjnv.petshop.dto.ShowDaFe;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
-import br.com.gjnv.petshop.repository.ClienteRepository;
 import br.com.gjnv.petshop.service.PetService;
+import br.com.gjnv.petshop.repository.ClienteRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(PetController.class)
 class PetControllerTest {
 
-    @InjectMocks
-    private PetController petController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private PetService petService;
 
-    @Mock
+    @MockBean
     private ClienteRepository clienteRepository;
 
-    private Pet pet;
-    private Cliente cliente;
-    private PetDto petDto;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
 
-        // Inicializando Cliente e Pet
-        cliente = new Cliente();
-        cliente.setId(1L);
-        cliente.setNome("Maria");
+    @Test
+    void testGetAllPets() throws Exception {
+        List<Pet> pets = Arrays.asList(new Pet(), new Pet());
+        when(petService.findAll()).thenReturn(pets);
 
-        pet = new Pet();
-        pet.setId(1L);
-        pet.setNome("Rex");
-        pet.setIdade(3);
-        pet.setRaca("Golden Retriever");
-        pet.setCliente(cliente);
+        mockMvc.perform(get("/pet"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(2));
 
-        petDto = new PetDto();
-        petDto.setId(1L);
+        verify(petService, times(1)).findAll();
+    }
+
+    @Test
+    void testGetPetById() throws Exception {
+        Long id = 1L;
+        Pet pet = new Pet();
+        when(petService.findById(id)).thenReturn(Optional.of(pet));
+
+        mockMvc.perform(get("/pet/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(petService, times(1)).findById(id);
+    }
+
+    @Test
+    void testGetPetById_NotFound() throws Exception {
+        Long id = 1L;
+        when(petService.findById(id)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/pet/{id}", id))
+                .andExpect(status().isNotFound());
+
+        verify(petService, times(1)).findById(id);
+    }
+
+    @Test
+    void testCreatePet() throws Exception {
+        PetDto petDto = new PetDto();
         petDto.setNome("Rex");
         petDto.setIdade(3);
-        petDto.setRaca("Golden Retriever");
+        petDto.setRaca("Labrador");
         petDto.setClienteId(1L);
-    }
 
-    @Test
-    void testGetAllPets() {
-        // Simulando o retorno de uma lista de pets
-        when(petService.findAll()).thenReturn(Collections.singletonList(pet));
+        Cliente cliente = new Cliente();
+        Pet pet = new Pet();
+        pet.setNome("Rex");
 
-        ResponseEntity<List<PetDto>> response = petController.getAllPets();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals("Rex", response.getBody().get(0).getNome());
-    }
-
-    @Test
-    void testGetPetById() {
-        // Simulando o retorno de um Pet por ID
-        when(petService.findById(1L)).thenReturn(Optional.of(pet));
-
-        ResponseEntity<PetDto> response = petController.getPetById(1L);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Rex", response.getBody().getNome());
-    }
-
-    @Test
-    void testGetPetByIdNotFound() {
-        // Simulando o caso em que o Pet não é encontrado
-        when(petService.findById(1L)).thenReturn(Optional.empty());
-
-        ResponseEntity<PetDto> response = petController.getPetById(1L);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNull(response.getBody());
-    }
-
-    @Test
-    void testCreatePet() {
-        // Simulando o cliente encontrado e a criação de um Pet
-        when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
+        when(clienteRepository.findById(petDto.getClienteId())).thenReturn(Optional.of(cliente));
         when(petService.save(any(Pet.class))).thenReturn(pet);
 
-        ResponseEntity<Pet> response = petController.createPet(petDto);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Rex", response.getBody().getNome());
+        mockMvc.perform(post("/pet")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(petDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        verify(petService, times(1)).save(any(Pet.class));
     }
 
     @Test
-    void testCreatePetClienteNotFound() {
-        // Simulando o caso em que o cliente não é encontrado
-        when(clienteRepository.findById(1L)).thenReturn(Optional.empty());
+    void testCreatePet_ClienteNotFound() throws Exception {
+        PetDto petDto = new PetDto();
+        petDto.setNome("Rex");
+        petDto.setIdade(3);
+        petDto.setRaca("Labrador");
+        petDto.setClienteId(1L);
 
-        ResponseEntity<Pet> response = petController.createPet(petDto);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNull(response.getBody());
-    }
+        when(clienteRepository.findById(petDto.getClienteId())).thenReturn(Optional.empty());
 
-//    @Test
-//    void testUpdatePetById() {
-//        // Simulando a atualização de um Pet
-//        when(petService.updateById(1L, pet)).thenReturn(pet);
-//
-//        clienteRepository.save(pet.getCliente());
-//
-//        ShowDaFe petDaFe = new ShowDaFe(pet.getNome(), pet.getIdade(), pet.getRaca(), pet.getCliente().getId());
-//
-//        ResponseEntity<Pet> response = petController.updatePetById(1L, petDaFe);
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertNotNull(response.getBody());
-//        assertEquals("Rex", response.getBody().getNome());
-//    }
-//
-//    @Test
-//    void testUpdatePetByIdNotFound() {
-//        // Simulando o caso em que o Pet não é encontrado para atualização
-//        when(petService.updateById(1L, pet)).thenReturn(null);
-//
-//        ShowDaFe petDaFe = new ShowDaFe(pet.getNome(), pet.getIdade(), pet.getRaca(), pet.getCliente().getId());
-//
-//        ResponseEntity<Pet> response = petController.updatePetById(1L, petDaFe);
-//        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-//        assertNull(response.getBody());
-//    }
+        mockMvc.perform(post("/pet")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(petDto)))
+                .andExpect(status().isBadRequest());
 
-    @Test
-    void testDeletePetById() {
-        // Simulando a exclusão de um Pet
-        when(petService.delete(1L)).thenReturn(true);
-
-        ResponseEntity<Void> response = petController.deletePetById(1L);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(clienteRepository, times(1)).findById(petDto.getClienteId());
+        verify(petService, times(0)).save(any(Pet.class));
     }
 
     @Test
-    void testDeletePetByIdNotFound() {
-        // Simulando o caso em que o Pet não é encontrado para exclusão
-        when(petService.delete(1L)).thenReturn(false);
+    void testUpdatePetById() throws Exception {
+        Long id = 1L;
 
-        ResponseEntity<Void> response = petController.deletePetById(1L);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        ShowDaFe petParaEditar = new ShowDaFe("Buddy", 4, "Golden", 1L);
+
+        Cliente cliente = new Cliente();
+        Pet petEditado = new Pet();
+        petEditado.setNome(petParaEditar.nome());
+        petEditado.setIdade(petParaEditar.idade());
+        petEditado.setRaca(petParaEditar.raca());
+        petEditado.setCliente(cliente);
+
+        when(clienteRepository.findById(petParaEditar.clienteId())).thenReturn(Optional.of(cliente));
+
+        when(petService.updateById(eq(id), any(Pet.class))).thenReturn(petEditado);
+
+        mockMvc.perform(put("/pet/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(petParaEditar)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.nome").value(petParaEditar.nome()))
+                .andExpect(jsonPath("$.idade").value(petParaEditar.idade()))
+                .andExpect(jsonPath("$.raca").value(petParaEditar.raca()));
+
+        verify(petService, times(1)).updateById(eq(id), any(Pet.class));
+    }
+
+
+
+    @Test
+    void testUpdatePetById_NotFound() throws Exception {
+        Long id = 1L;
+        ShowDaFe petParaEditar = new ShowDaFe("Buddy", 4, "Golden", 1L);
+
+        when(clienteRepository.findById(petParaEditar.clienteId())).thenReturn(Optional.empty());
+
+        mockMvc.perform(put("/pet/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(petParaEditar)))
+                .andExpect(status().isBadRequest());
+
+        verify(clienteRepository, times(1)).findById(petParaEditar.clienteId());
+        verify(petService, times(0)).updateById(eq(id), any(Pet.class));
     }
 
     @Test
-    void testDeletePetByIdInternalServerError() {
-        // Simulando uma exceção durante a exclusão
-        when(petService.delete(1L)).thenThrow(new RuntimeException());
+    void testDeletePetById() throws Exception {
+        Long id = 1L;
+        when(petService.delete(id)).thenReturn(true);
 
-        ResponseEntity<Void> response = petController.deletePetById(1L);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        mockMvc.perform(delete("/pet/{id}", id))
+                .andExpect(status().isNoContent());
+
+        verify(petService, times(1)).delete(id);
+    }
+
+    @Test
+    void testDeletePetById_NotFound() throws Exception {
+        Long id = 1L;
+        when(petService.delete(id)).thenReturn(false);
+
+        mockMvc.perform(delete("/pet/{id}", id))
+                .andExpect(status().isNotFound());
+
+        verify(petService, times(1)).delete(id);
     }
 }

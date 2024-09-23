@@ -74,7 +74,6 @@ public class Gerente extends Funcionario implements IClienteManager {
         this.metaMensal = metaMensal;
     }
 
-    //Implementações desses métodos serão feitas no GerenteService
     @Override
     public void cadastrarCliente(Cliente cliente) {
 
