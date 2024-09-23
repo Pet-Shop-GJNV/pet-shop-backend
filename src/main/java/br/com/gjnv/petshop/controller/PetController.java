@@ -1,31 +1,37 @@
 package br.com.gjnv.petshop.controller;
 
-import br.com.gjnv.petshop.dto.ClienteDto;
 import br.com.gjnv.petshop.dto.PetDto;
 import br.com.gjnv.petshop.model.Cliente;
 import br.com.gjnv.petshop.model.Pet;
 import br.com.gjnv.petshop.repository.ClienteRepository;
-import br.com.gjnv.petshop.service.ClienteService;
 import br.com.gjnv.petshop.service.PetService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequestMapping("/pet")
 @RestController
+@Tag(name = "Pet", description = "Gerencia os pets")
 public class PetController {
 
-    @Autowired
-    public PetService petService;
+    public final PetService petService;
+    public final ClienteRepository clienteRepository;
 
     @Autowired
-    public ClienteRepository clienteRepository;
+    public PetController(PetService petService, ClienteRepository clienteRepository) {
+        this.petService = petService;
+        this.clienteRepository = clienteRepository;
+    }
 
     @GetMapping()
+    @Operation(summary = "Retorna todos os pets")
     public ResponseEntity<List<PetDto>> getAllPets() {
         List<Pet> pets = petService.findAll();
         List<PetDto> petDTOs = pets.stream().map(pet -> {
@@ -43,6 +49,7 @@ public class PetController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Retorna um pet especifico")
     public ResponseEntity<PetDto> getPetById(@PathVariable Long id) {
         Optional<Pet> pet = petService.findById(id);
         if (pet.isPresent()) {
@@ -57,6 +64,7 @@ public class PetController {
     }
 
     @PostMapping
+    @Operation(summary = "Cria um novo pet")
     public ResponseEntity<Pet> createPet(@RequestBody PetDto petDto) {
         try {
             Optional<Cliente> optionalCliente = clienteRepository.findById(petDto.getClienteId());
@@ -78,6 +86,7 @@ public class PetController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um pet existente")
     public ResponseEntity<Pet> updatePetById(@PathVariable Long id, @RequestBody Pet petParaEditar) {
         Pet pet = petService.updateById(id, petParaEditar);
         if (pet != null) {
@@ -89,12 +98,13 @@ public class PetController {
 
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um pet existente")
     public ResponseEntity<Void> deletePetById(@PathVariable Long id) {
         try {
             if (petService.delete(id)) {
                 return ResponseEntity.noContent().build();
             }
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
