@@ -22,7 +22,7 @@ public class Atendente extends Funcionario implements IPetManager, IClienteManag
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    public Atendente(String nome, String cpf, Endereco endereco, String telefone, String cnh, String veiculo, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
+    public Atendente(String nome, String cpf, Endereco endereco, String telefone, Date dataContratacao, String horarioTrabalho, String cargo, double salario) {
         super(nome, cpf, endereco, telefone, dataContratacao, horarioTrabalho, cargo, salario);
         this.servicoRealizado = false;
     }
