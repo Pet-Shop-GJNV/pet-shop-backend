@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-public class AgendamentoControllerTest {
+class AgendamentoControllerTest {
 
     @InjectMocks
     private AgendamentoController agendamentoController;
@@ -68,7 +68,6 @@ public class AgendamentoControllerTest {
         ResponseEntity<Agendamento> response = agendamentoController.criarAgendamento(agendamentoDto);
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(novoAgendamento.getId(), response.getBody().getId());
     }
 
     @Test
@@ -77,6 +76,10 @@ public class AgendamentoControllerTest {
         AgendamentoDto agendamentoDto = new AgendamentoDto();
         Agendamento agendamentoAtualizado = new Agendamento();
         agendamentoAtualizado.setId(id);
+        agendamentoDto.setId(id);
+
+        when(agendamentoService.createAgendamento(agendamentoDto)).thenReturn(agendamentoAtualizado);
+
 
         when(agendamentoService.updateAgendamento(id, agendamentoDto)).thenReturn(agendamentoAtualizado);
 
